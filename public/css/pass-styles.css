@@ -1,0 +1,14 @@
+/* CSS Variables */
+.pass-layout-email {
+  background-color: white;
+  color:black;
+  font-size:14px;
+  width: 99%;
+  border-radius: 5px;
+  border-color: black;
+  border: solid 1px;
+}
+
+.pass-name-color {
+	color: black;
+}

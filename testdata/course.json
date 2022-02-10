@@ -1,0 +1,10 @@
+[ 
+{ "id":"304","name":"Algebra 1A", "department": "Mathematics"},
+{ "id":"334","name":"Algebra 1B","department": "Mathematics"},
+{ "id":"912","name":"English 1","department": "English"},
+{ "id":"913","name":"Gym","department": "Physical Education"},
+{ "id":"335","name":"Physics","department": "Science"},
+{ "id":"336","name":"Web Design","department": "Business"},
+{ "id":"337","name":"History 1","department": "Social Studies"},
+{ "id":"338","name":"Civics","department": "Social Studies"}
+]

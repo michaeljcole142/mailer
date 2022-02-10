@@ -1,0 +1,10 @@
+[ 
+{ "id":"1","room":"918", "blockNum": "1", "day": "B","courseId" : "912", "teacherId" : "1001", "students" : [1,2,3,4,5,6,7,8,9,10]},
+{ "id":"2","room":"919", "blockNum": "2", "day": "B","courseId" : "913", "teacherId" : "1002", "students" : [1,2,3,4,5,6,7,8,9,10]},
+{ "id":"3","room":"920", "blockNum": "3", "day": "B","courseId" : "913", "teacherId" : "1001", "students" : [1,2,3,4,5,6,7,8,9,10]},
+{ "id":"4","room":"921", "blockNum": "4", "day": "B","courseId" : "913", "teacherId" : "1002", "students" : [1,2,3,4,5,6,7,8,9,10]},
+{ "id":"5","room":"922", "blockNum": "1", "day": "A","courseId" : "913", "teacherId" : "1001", "students" : [1,2,3,4,5,6,7,8,9,10]},
+{ "id":"6","room":"923", "blockNum": "2", "day": "A","courseId" : "913", "teacherId" : "1002", "students" : [1,2,3,4,5,6,7,8,9,10]},
+{ "id":"7","room":"924", "blockNum": "3", "day": "A","courseId" : "913", "teacherId" : "1001", "students" : [1,2,3,4,5,6,7,8,9,10]},
+{ "id":"8","room":"925", "blockNum": "4", "day": "A","courseId" : "913", "teacherId" : "1002", "students" : [1,2,3,4,5,6,7,8,9,10]}
+]

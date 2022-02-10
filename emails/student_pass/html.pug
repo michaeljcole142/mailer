@@ -1,0 +1,30 @@
+doctype html
+html
+  head
+    script(type="text/javascript",src="../public/vendor/bootstrap/js/bootstrap.bundle.min.js")
+    link(rel="stylesheet", href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css")
+    link(rel="stylesheet",href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css",integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T",crossorigin="anonymous")
+    link(href="../public/css/pass-styles.css",rel="stylesheet") 
+  body
+    p Hello #{name},
+    p
+    p See below a pass for you.
+    p       
+    
+    br
+    br
+    div.container.w-100.pass-layout-email
+      div.row
+        div.col-sm-12.pass-name-color.p-1
+          l Name: 
+          b.pass-name-color #{name}
+      div.row
+          div.col-sm-12.p-1 From: #{from}
+      div.row
+          div.col-sm-12.p-1 Time: #{datetime}
+      div.row
+        div.col-sm-12.p-1 Note: #{note}
+      br
+    br
+    br
+    p  <a href="https://www.hcrhs.org"><u>www.hcrhs.org </u></a>
