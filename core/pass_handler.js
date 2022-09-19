@@ -13,8 +13,8 @@ class PassHandler {
 		this.thePasses = new Map();
 	}	
 	
-	initialize() {
-		this.thePasses = DataLoader.getPassData();
+	async initialize() {
+		this.thePasses = await DataLoader.getPassData();
 	}
 	/*
 	 * decorate adds instance objects  
@@ -27,7 +27,7 @@ class PassHandler {
 			/* decorate student */
 			var student = studentMap.get(passAt.studentId);
 			if ( student == null ) {
-				DataIntegrity.addIssue("ERROR","Can't find student->" + passAt.studentId + " for pass->" + passAt.id);
+				DataIntegrity.addIssue("ERROR","PassHandler","decorate","Can't find student->" + passAt.studentId + " for pass->" + passAt.id);
 			} else {
 				passAt.student = student;
 			}

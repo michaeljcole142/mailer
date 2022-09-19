@@ -18,6 +18,7 @@ class EmailHandler {
 		this.transporter = null;
 	}
 	async initialize() {
+		/*
 		this.transporter = await nodemailer.createTransport({
 			service: 'gmail.com',
 			auth: {
@@ -25,6 +26,16 @@ class EmailHandler {
 				pass: this.pwd
 			}
 		});
+		*/
+		const anothertransporter = await nodemailer.createTransport({
+			host: 'smtp.ethereal.email',	
+			port: 587,
+			auth: {
+				user: 'joe.crist92@ethereal.email',
+				pass: 'thC9m9162qfWzTb9vF'
+			}
+		});
+		this.transporter = anothertransporter;
 	}
 	async sendPassToStudent(thePass) {
 		if ( this.transporter == null ) {

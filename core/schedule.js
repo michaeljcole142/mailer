@@ -4,68 +4,43 @@
  * for a faculty member or a student.
  */
 const DataIntegrity =  require('./data_integrity');
- 
+
 class Schedule {
+	
+	static scheduleDisplayMap=null;
 	
 	/* blocks should be constrained to 5 blocks. */
 	constructor(aId) {
 		this.id = aId;  // this is a backwards pointer to the
 						// id of the teacher or student it is associated with.
+		this.blockCount=0;  // this is a count of not null across 2 arrays. Updated in all setBlock Calls.
 		this.ADayBlocks = [null,null,null,null];
 		this.BDayBlocks = [null,null,null,null];
 	}	
 	
-	addBlock(block) {
-		if ( block.day == "A" && block.blockNum == 1 ) {
-			if ( this.ADayBlocks[0] != null ) {
-				DataIntegrity("INFO","Replacing existing block for->" + this.id + " for A Day block 1");
-			} else {
-				this.ADayBlocks[0] = block;
-			}		
-		} else if ( block.day == "A" && block.blockNum == 2 ) {
-			if ( this.ADayBlocks[1] != null ) {
-				DataIntegrity("INFO","Replacing existing block for->" + this.id + " for A Day block 2");
-			} else {
-				this.ADayBlocks[1] = block;
-			}		
-		} else if ( block.day == "A" && block.blockNum == 3 ) {
-			if ( this.ADayBlocks[2] != null ) {
-				DataIntegrity("INFO","Replacing existing block for->" + this.id + " for A Day block 3");
-			} else {
-				this.ADayBlocks[2] = block;
-			}		
-		} else if ( block.day == "A" && block.blockNum == 4 ) {
-			if ( this.ADayBlocks[3] != null ) {
-				DataIntegrity("INFO","Replacing existing block for->" + this.id + " for A Day block 4");
-			} else {
-				this.ADayBlocks[3] = block;
-			}		
-		} else if ( block.day == "B" && block.blockNum == 1 ) {
-			if ( this.BDayBlocks[0] != null ) {
-				DataIntegrity("INFO","Replacing existing block for->" + this.id + " for B Day block 1");
-			} else {
-				this.BDayBlocks[0] = block;
-			}		
-		} else if ( block.day == "B" && block.blockNum == 2 ) {
-			if ( this.BDayBlocks[1] != null ) {
-				DataIntegrity("INFO","Replacing existing block for->" + this.id + " for B Day block 2");
-			} else {
-				this.BDayBlocks[1] = block;
-			}		
-		} else if ( block.day == "B" && block.blockNum == 3 ) {
-			if ( this.BDayBlocks[2] != null ) {
-				DataIntegrity("INFO","Replacing existing block for->" + this.id + " for B Day block 3");
-			} else {
-				this.BDayBlocks[2] = block;
-			}		
-		} else if ( block.day == "B" && block.blockNum == 4 ) {
-				if ( this.BDayBlocks[3] != null ) {
-				DataIntegrity("INFO","Replacing existing block for->" + this.id + " for B Day block 4");
-			} else {
-				this.BDayBlocks[3] = block;
-			}				
+	setBlocks(block) {
+		if ( Schedule.scheduleDisplayMap == null ) {
+			Schedule.initializeScheduleDisplayMap();
+		}
+		var blksA=Schedule.scheduleDisplayMap.get(block.scheduleDisplay);
+
+		if ( blksA == null ) {
+			DataIntegrity.addIssue("ERROR","Schedule","setBlock","Can not find schedule display for->" + block.displaySchedule + " with->" +  JSON.stringify(this));
 		} else {
-			DataIntegrity.addIssue("ERROR","Adding Schedule item with bad block->" + block.blockNum + " or day->" + block.day + " for block->" + block.id);
+			for ( var i=0; i < blksA.length; i++ ) {
+				if ( blksA[i][0] == "A" ) {
+					this.ADayBlocks[blksA[i][1]-1] = block;
+				} else if ( blksA[i][0] == "B" ) {
+					this.BDayBlocks[blksA[i][1]-1] = block;
+				} else {
+					DataIntegrity.addIssue("ERROR","Schedule","setBlock","Can not find Day schedule display for->" + block.displaySchedule + " with->" +  JSON.stringify(this));
+				}
+			}
+		}
+		this.blockCount=0;
+		for ( var i=0; i < 4; i++ ) {
+			if ( this.ADayBlocks[i] != null ) { this.blockCount++; }
+			if ( this.BDayBlocks[i] != null ) { this.blockCount++; }
 		}
 	}
 	getBlock(blockName) {
@@ -87,6 +62,30 @@ class Schedule {
 			return this.BDayBlocks[3];
 		}
 		return null;
+	}
+	static initializeScheduleDisplayMap() {
+		Schedule.scheduleDisplayMap=new Map();
+		var sdm = Schedule.scheduleDisplayMap;
+		sdm.set("1(A)", [["A",1]]);
+		sdm.set("1(B)", [["B",1]]);
+		sdm.set("2(A)", [["A",2]]);
+		sdm.set("2(B)", [["B",2]]);
+		sdm.set("3(A)", [["A",3]]);
+		sdm.set("3(B)", [["B",3]]);
+		sdm.set("4(A)", [["A",4]]);
+		sdm.set("4(B)", [["B",4]]);
+		sdm.set("1(A-B)",[["A",1],["B",1]]);
+		sdm.set("2(A-B)",[["A",2],["B",2]]);
+		sdm.set("3(A-B)",[["A",3],["B",3]]);
+		sdm.set("4(A-B)",[["A",4],["B",4]]);
+		sdm.set("1-2(B)",[["B",1],["B",2]]);
+		sdm.set("1-2(A)",[["A",1],["A",2]]);
+		sdm.set("3-4(B)",[["B",3],["B",4]]);
+		sdm.set("3-4(A)",[["A",3],["A",4]]);	
+		sdm.set("3-4(A-B)",[["B",3],["B",4],["A",3],["A",4]]);
+		sdm.set("1-2(A-B)",[["B",1],["B",2],["A",1],["A",2]]);
+		sdm.set("1-2,3-4(A-B)",[["B",1],["B",2],["B",3],["B",4],["A",1],["A",2],["A",3],["A",4]]);
+		sdm.set("1-2,3-4(A)",[["A",1],["A",2],["A",3],["A",4]]);
 	}
 }
 module.exports = Schedule;

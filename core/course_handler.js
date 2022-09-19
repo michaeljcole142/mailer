@@ -12,8 +12,8 @@ class CourseHandler {
 		this.theCourses = new Map();
 	}	
 	
-	initialize() {
-		this.theCourses = DataLoader.getCourseData();
+	async initialize() {
+		this.theCourses = await DataLoader.getCourseData();
 	}	
 }
 module.exports = CourseHandler;

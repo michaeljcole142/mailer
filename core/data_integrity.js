@@ -11,7 +11,9 @@ class DataIntegrity {
 	 * It will become more formal as we learn more. mcole - 2/8/2020
 	 */
 	static issues=[];
-	
+	static initialize() { 
+		DataIntegrity.issues=[];
+	}
 	static print() {
 		if ( DataIntegrity.issues.length > 0 ) {
 			for (var i=0; i < DataIntegrity.issues.length; i++ ) {
@@ -21,8 +23,8 @@ class DataIntegrity {
 			console.log("no integrity errors");
 		}
 	}
-	static addIssue(l,d) {
-		DataIntegrity.issues.push({level:l,description: d});
+	static addIssue(l,o,m,d) {
+		DataIntegrity.issues.push({level:l,description: d, objectType: o,method: m});
 	}
 	
 }
