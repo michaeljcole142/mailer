@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<style>
+table, th, td {
+  border:1px solid black;
+  border-collapse: collapse;
+}
+</style>
+<head>
+
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="description" content="">
+	<meta name="author" content="">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+	<script src="js/DataLoader.js"></script>
+	<script src="js/ViewBuilder.js"></script>
+	<script src="js/Controller.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+</head>
+<body>
+	<div class="w-95">
+		<h1>Welcome to Pass Something</h1>
+		<br>
+		<button id="initialize-load-btn" class="ml-4" onclick="theController.initializeData()">Initialize Load</button>
+		<label id="integrity-processing" class="d-none ml-4">Please wait while the server processes initialization...</label>
+		<br>
+		<ul class="nav nav-tabs" id="myTab" role="tablist">
+			<li class="nav-item">
+				<a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Home</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Students</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" id="block-type-tab" data-toggle="tab" href="#block-type" role="tab" aria-controls="block-type" aria-selected="false">Block Type</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Faculty</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" id="contact-tab" data-toggle="tab" href="#passes" role="tab" aria-controls="passes" aria-selected="false">Passes</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" id="dp-tab" data-toggle="tab" href="#dp" role="tab" aria-controls="dp" aria-selected="false">Decorated Passes</a>
+			</li>
+		</ul>
+		<div class="tab-content" id="myTabContent">
+			<div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+				<section id="Integrity">
+				<div id="integrity-div">
+					<table style="width=50%">
+						<thead>
+							<tr>
+								<th style="width:40%"> Class</th>
+								<th style="width:40%"> Method</th>
+								<th style="width:20%"> Count</th>
+							</tr>
+						</thead>
+						<tbody id="integrity-tab-totals">
+						</tbody>
+					</table>
+					<br>
+					<table style="width:100%">
+						<thead>
+							<tr>
+								<th style="width:10%">Type</th>
+								<th style="width:10%"> Class</th>
+								<th style="width:10%"> Method</th>
+								<th style="width:70%"> Message</th>
+							</tr>
+						</thead>
+						<tbody id="integrity-tab-body">
+						</tbody>
+					</table>
+				</div>
+				</section>
+			</div>
+			<div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="students-tab">
+				<div id="student-div">
+					<table style="width=50%">
+						<thead>
+							<tr>
+								<th style="width:10%">Id</th>
+								<th style="width:10%">Name</th>
+								<th style="width:10%">Email</th>
+								<th style="width:5%">Blocks</th>
+								<th style="width:65%">Schedule</th>
+							</tr>
+						</thead>
+						<tbody id="student-tab-body">
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="faculty-tab">Faculty Goes Here</div>
+			<div class="tab-pane fade" id="block-type" role="tabpanel" aria-labelledby="block-type-tab">
+				<table style="width=50%">
+					<thead>
+						<tr>
+							<th style="width:50%">Block Name</th>
+							<th style="width:50%">Count</th>
+						</tr>
+					</thead>
+					<tbody id="block-type-tab-body">
+					</tbody>
+				</table>
+			</div>
+			<div class="tab-pane fade" id="passes" role="tabpanel" aria-labelledby="passes">
+				<table style="width=100%">
+					<thead>
+						<tr>
+							<th style="width:10%">Id</th>
+							<th style="width:10%">StudentId</th>
+							<th style="width:5%">StudentObject</th>
+							<th style="width:5%">FromBlock</th>
+							<th style="width:10%">Time</th>
+							<th style="width:60%">Note</th>
+						</tr>
+					</thead>
+					<tbody id="passes-tab-body">
+					</tbody>
+				</table>
+			</div>
+			<div class="tab-pane fade" id="dp" role="tabpanel" aria-labelledby="dp">
+				<table style="width=100%">
+					<thead>
+						<tr>
+							<th style="width:10%">Student Id</th>
+							<th style="width:10%">Student Name</th>
+							<th style="width:10%">Student Email</th>
+							<th style="width:10%">HR</th>
+							<th style="width:10%">HR Teacher</th>
+							<th style="width:10">HR Email</th>
+							<th style="width:10%">Time</th>
+							<th style="width:30%">Note</th>
+						</tr>
+					</thead>
+					<tbody id="dp-tab-body">
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+ </body>
+ <footer> 
+ </footer>
+
+
+
+<script>
+var theController = new Controller();
+
+</script>
+
+</html>
