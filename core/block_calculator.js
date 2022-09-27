@@ -10,11 +10,25 @@
 
 class BlockCalculator {	
 	
+	static ABDay;
+	
+	static setABDay(abIn){
+		if ( abIn != "A" && abIn != "B" ) {
+			BlockCalculator.ABDay = abIn;
+			console.log("ERROR: Bad ABDay Initialized->" + abIn);
+		} else {
+			BlockCalculator.ABDay = abIn;
+		}
+	}
+	static getCurrentTerm() {
+		return "S1";
+	}
+	
 	/*
 	 * This is hard coded for now...
 	 */
 	static getBlockInfo(dateTime) {
-		return "B1";
+		return BlockCalculator.ABDay + "1";
 	}
 }
 module.exports = BlockCalculator;

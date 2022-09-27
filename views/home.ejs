@@ -25,9 +25,13 @@ table, th, td {
 </head>
 <body>
 	<div class="w-95">
+		<img src="./images/HCLogo.PNG"></img>
+		<br>
 		<h1>Welcome to Pass Something</h1>
 		<br>
 		<button id="initialize-load-btn" class="ml-4" onclick="theController.initializeData()">Initialize Load</button>
+		<label>A/B Day</label><input maxlength="1" size="1" type="text" class="ml-2" id="block-day"></input><label class="ml-2">Date(yyyy-mm-dd):</label> <input maxlength="10" size="10" class="ml-2" type="text" id="for-date"></input>
+		<br>
 		<label id="integrity-processing" class="d-none ml-4">Please wait while the server processes initialization...</label>
 		<br>
 		<ul class="nav nav-tabs" id="myTab" role="tablist">

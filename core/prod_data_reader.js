@@ -44,9 +44,9 @@ class ProdDataReader
 	} //end getData
 
   
-	static async getPassData()
+	static async getPassData(forDate)
 	{
-		var d = "2022-04-28";
+		var d = forDate;
 		var thePasses = new Map();
 		var thePasses = new Map();
 		console.log("Date is " + d);
@@ -64,15 +64,19 @@ class ProdDataReader
 	static async getStudentData() 
 	{
 		var theStudents = new Map();
-		var std =  await ProdDataReader.getData(url + "Students?status=Active");
+		var std =  await ProdDataReader.getData(url + "students?status=Active");
 		for (var i=0; i < std.length; i++ ) 
 		{
-			var s=new Student(parseInt(std[i].localId), std[i].nameView, std[i].person.email01,std[i]);
-			theStudents.set(s.id,s);
+			//1's are OUT.
+			if (std[i].fieldB017 != "1")
+			{
+				var s=new Student(parseInt(std[i].localId), std[i].nameView, std[i].person.email01,std[i]);
+				theStudents.set(s.id,s);
+			} 
 		}
 		return theStudents;
 	}
-
+	
 	static async getStudentBlockData()
 	{
 		var prevId = "";
@@ -85,7 +89,7 @@ class ProdDataReader
 		if (month > 6)
 		year = year + 1;
 
-		var ss =  await ProdDataReader.getData(url + "stdSched2?year=" + year);		console.log("SSS->" + JSON.stringify(ss[0]));
+		var ss =  await ProdDataReader.getData(url + "stdSched2?year=" + year);
 /*
 		for (var i=0; i < ss.length; i++ )
 			{
@@ -105,25 +109,17 @@ class ProdDataReader
 		return ss;
 	}
   
-	static async getFacultyData() 
+	static async getFacultyData()
 	{
 		var theFaculty = new Map();
-		var f =  await ProdDataReader.getData(url + "staff?status=Active");
-		console.log("FFFFFFFFFFFFF");
-		console.log(JSON.stringify(f));
-		console.log("FFFFFFFFFFFFFFF");
-		for (var i=0; i < f.length; i++ ) 
-		{
-			if (f[i].stateId == null ) {
-				f[i].stateId = ProdDataReader.tempFacultyId;
-				ProdDataReader.tempFacultyId++;
-			}
-			var fac = new Faculty(parseInt(f[i].stateId), f[i].nameView, f[i].person.email01);
+		var f =  await ProdDataReader.getData(url + "staff2?status=Active");
+		for (var i=0; i < f.length; i++ )
+		{  
+			var fac = new Faculty(parseInt(f[i].stateId), f[i].nameView, f[i].person.email01, f[i].departmentCode);
 			theFaculty.set(f[i].stateId,fac);
-		}
+		} 
 		return theFaculty;
 	}
-
   
 	static async getCourseData() 
 	{

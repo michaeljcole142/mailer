@@ -7,13 +7,12 @@ const Email = require('email-templates');
  */
 
 class EmailHandler {
-	
+	static mailerp = "ssycjnwyctovwrep";	
 	constructor() {	
 		this.user = null;  //need initialization mechanism later.
-		this.pwd = null;
+		this.pwd = EmailHandler.mailerp;
 		if ( this.user == null ) {
 			this.user = 'wrestlingvision.info@gmail.com';
-			this.pwd = 'myVision1';
 		}
 		this.transporter = null;
 	}
@@ -31,8 +30,8 @@ class EmailHandler {
 			host: 'smtp.ethereal.email',	
 			port: 587,
 			auth: {
-				user: 'joe.crist92@ethereal.email',
-				pass: 'thC9m9162qfWzTb9vF'
+				user: 'reba.hagenes61@ethereal.email',
+				pass: 'wgmX6FqWRz4QdB1AUt'
 			}
 		});
 		this.transporter = anothertransporter;

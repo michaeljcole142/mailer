@@ -7,6 +7,8 @@ const bodyparser = require("body-parser");
 const PassFactory = require("./core/pass_factory");
 const DataIntegrity = require("./core/data_integrity");
 
+console.log("starting server...");
+
 //Middle ware
 
 app.use(bodyparser.json());
@@ -32,6 +34,8 @@ app.get('/', (req, res)=>{
 	
 });
 
+console.log("setting up get_faculty_for");
+
 app.get('/get_faculty_for', (req, res)=>{   
 	var fid = req.query.facultyId;
 	var fem = req.query.facultyEmail;
@@ -44,11 +48,14 @@ app.get('/get_faculty_for', (req, res)=>{
 	if ( res==null ) { res="not found"; }
 	res.status(200).send("Here->" + JSON.stringify(res)); 	
 });
+console.log("get_master_schedule_for");
+
 app.get('/get_master_schedule_for', (req, res)=>{   
 	var pd = req.query.courseView;
 	res.status(200).send("Here->" + JSON.stringify(thePassFactory.theMasterScheduleHandler.theMasterSchedule.get(pd))); 
 	
 });
+console.log("get_student_for");
 app.get('/get_student_for', (req, res)=>{   
 	var pd = req.query.studentId;
 	console.log("getting student for->"+ pd);
@@ -57,6 +64,7 @@ app.get('/get_student_for', (req, res)=>{
 /*
  * This provides a direct link to user dev card.
  */
+console.log("mail_test...");
 app.get("/mail_test", (req, res)=>{   
 	var name = req.query.name;
 	var title= req.query.title;
@@ -67,21 +75,24 @@ app.get("/mail_test", (req, res)=>{
 	
 });
 
+console.log("mail_passes");
 app.get("/mail_pases", (req, res)=>{   
 	
 	res.status(200).send(JSON.stringify(data)); 
 	
 });
 
+console.log("initialize_data");
 app.post("/initialize_data", (req, res)=>{   
-	console.log("in initialize_data call");
 	(async() =>  { 
 		var j = JSON.stringify(req.body);
 		var data = JSON.parse(j);
-		await thePassFactory.initialize();
+		console.log("in initialize_data call->" + JSON.stringify(data));
+		await thePassFactory.initialize(data.abDay, data.forDate);
 		res.status(200).send(JSON.stringify(DataIntegrity.issues)); 	
 	} )();
 });
+console.log("get_student_data");
 app.post("/get_student_data", (req, res)=>{   
 	console.log("in get_student_data call");
 	(async() =>  { 
@@ -90,6 +101,8 @@ app.post("/get_student_data", (req, res)=>{
 		res.status(200).send(JSON.stringify(Array.from(thePassFactory.theStudentHandler.theStudents.values()))); 	
 	} )();
 });
+console.log("get_student_block_names");
+
 app.post("/get_student_block_names", (req, res)=>{   
 	console.log("in get_student_block_names call");
 	(async() =>  { 
@@ -99,6 +112,7 @@ app.post("/get_student_block_names", (req, res)=>{
 		res.status(200).send(JSON.stringify(rr)); 	
 	} )();
 });
+console.log("get_passes");
 app.post("/get_passes", (req, res)=>{   
 	console.log("in get_passes call");
 	(async() =>  { 
@@ -108,6 +122,7 @@ app.post("/get_passes", (req, res)=>{
 		res.status(200).send(JSON.stringify(rr)); 	
 	} )();
 });
+console.log("get_decorate_passes");
 app.post("/get_decorated_passes", (req, res)=>{   
 	console.log("in get_decorated_passes call");
 	(async() =>  { 
@@ -120,6 +135,7 @@ app.post("/get_decorated_passes", (req, res)=>{
 /*
  * Start the passFactory
  */
+ console.log("starting PassFactory...");
 var thePassFactory = new PassFactory();
 
 /*

@@ -5,16 +5,19 @@
 const Pass =  require('./pass');
 const DataLoader = require('./data_loader');
 const BlockCalculator = require('./block_calculator');
+const DataIntegrity = require('./data_integrity');
 
 
 class PassHandler {
 	
 	constructor() {
 		this.thePasses = new Map();
+		this.forDate=null;
 	}	
 	
-	async initialize() {
-		this.thePasses = await DataLoader.getPassData();
+	async initialize(forDate) {
+		this.forDate=forDate;
+		this.thePasses = await DataLoader.getPassData(forDate);
 	}
 	/*
 	 * decorate adds instance objects  
@@ -30,10 +33,9 @@ class PassHandler {
 				DataIntegrity.addIssue("ERROR","PassHandler","decorate","Can't find student->" + passAt.studentId + " for pass->" + passAt.id);
 			} else {
 				passAt.student = student;
+				var from = BlockCalculator.getBlockInfo(passAt.dateTime);
+				passAt.fromBlock=student.getScheduleBlock(from);
 			}
-			var from = BlockCalculator.getBlockInfo(passAt.dateTime);
-			passAt.fromBlock=student.getScheduleBlock(from);
-			
 		}
 		return;
 	}	

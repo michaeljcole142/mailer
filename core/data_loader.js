@@ -46,11 +46,11 @@ class DataLoader {
 			throw Error("Unknown Production Mode!!!");
 		}
 	}
-	static async getPassData() {
+	static async getPassData(forDate) {
 		if ( ProdMode.isProductionModeTest() ) {
-			return await TestDataReader.getPassData();
+			return await TestDataReader.getPassData(forDate);
 		} else if ( ProdMode.isProductionModeProd() ) {
-			return await ProdDataReader.getPassData();
+			return await ProdDataReader.getPassData(forDate);
 		} else {
 			throw Error("Unknown Production Mode!!!");
 		}

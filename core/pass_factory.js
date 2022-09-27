@@ -13,6 +13,7 @@ const DataIntegrity = require('./data_integrity');
 const EmailHandler = require('./email_handler');
 const ProdMode = require('./prod_mode');
 const MasterScheduleHandler = require('./master_schedule_handler');
+const BlockCalculator = require('./block_calculator');
 
 
 class PassFactory {
@@ -29,7 +30,9 @@ class PassFactory {
 		this.theEmailHandler = null;
 	}	
 	
-	async initialize() {
+	async initialize(abDay,forDate) {
+		BlockCalculator.setABDay(abDay);
+		this.forDate = forDate;
 		this.theProdMode = new ProdMode();
 		this.theStudentHandler = new StudentHandler();
 		this.theFacultyHandler = new FacultyHandler();
@@ -60,8 +63,8 @@ class PassFactory {
 		await this.theMasterScheduleHandler.initialize();
 		console.log("\tFinished initializing theMasterScheduleHandler...");
 		console.log("\tInitializing thePassHandler...");
-		await this.thePassHandler.initialize();
-		console.log("\tFinished initializing thePassHandler...");
+		await this.thePassHandler.initialize(forDate);
+		console.log("\tFinished initializing thePassHandler for " + forDate + "...");
 		/*
 		 * Decorating the data means, that we lookup instances of objects
 		 * and put them with the containers that refernce them.
@@ -75,7 +78,7 @@ class PassFactory {
 //		DataIntegrity.print();
 		this.decorateDataObjects();
 		
-//		this.emailPasses();
+		this.emailPasses();
 	}
 	decorateDataObjects() {
 		/* 
@@ -105,7 +108,8 @@ class PassFactory {
 	}
 	async emailPasses() {
 		var passes = Array.from(this.thePassHandler.thePasses);
-		for ( var i=0; i < passes.length; i++ ) {
+//		for ( var i=0; i < passes.length; i++ ) {
+		for ( var i=0; i < 1; i++ ) {
 			var passAt = passes[i][1];
 			this.theEmailHandler.sendPassToStudent(passAt);
 		}	
@@ -116,32 +120,24 @@ class PassFactory {
 		for ( var i=0; i < passes.length; i++ ) {
 			var here=false;
 			var dpi={};
-			if ( passes[i].studentId == 225206 ) {
-				here = true;
-				console.log("VVVVVVVVVVVVVVVVVVVVVVVVVV");
-			}
+			
 			dpi.studentId=passes[i].studentId;
 			dpi.dateTime=passes[i].dateTime;
 			dpi.note=passes[i].note;
 			var studentAt = this.theStudentHandler.theStudents.get(passes[i].studentId);
 			if ( studentAt != null ) {
-if ( here ) { console.log("in first if"); }
 				dpi.studentName=studentAt.name;			
 				dpi.studentEmail=studentAt.email;			
 				var facultyAt=null;
 				if ( studentAt.theSchedule.ADayBlocks[0] != null ) {
-if ( here) { console.log("in 2nd if->" + JSON.stringify(studentAt.theSchedule.ADayBlocks[0].primaryEmail)); }
 					dpi.homeRoomNumber=studentAt.theSchedule.ADayBlocks[0].room;
 					facultyAt = this.theFacultyHandler.theFacultyByEmail.get(studentAt.theSchedule.ADayBlocks[0].primaryEmail);
-if ( here) { console.log("facultyAt->" + facultyAt); }
 				}
 				if ( facultyAt != null ) {
-if ( here) { console.log("fac found->" + JSON.stringify(facultyAt));}
 					dpi.homeRoomTeacherName=facultyAt.name;
 					dpi.homeRoomTeacherEmail=facultyAt.email;
 				}
 			}
-if ( here ){	console.log("built->" + JSON.stringify(dpi)); }
 			dp.push(dpi); 
 		}
 		return dp;

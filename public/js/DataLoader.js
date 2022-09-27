@@ -8,12 +8,13 @@ class DataLoader {
 	constructor() {
 	}
 	
-	async initializeData() {	
+	async initializeData(abDay,forDate) {	
 		const rr = async()=> { 
-			var data={ "foo":"bar" };
+			var data={ "abDay":abDay, "forDate" : forDate };
 			const response = await fetch('/initialize_data', {
 				method : 'POST' ,
-				headers: {'Content-Type': 'application/json'}
+				headers: {'Content-Type': 'application/json'},
+				body: JSON.stringify(data)
 			});
 			if ( response.status !== 200 ) {
 				const json = await response.json();

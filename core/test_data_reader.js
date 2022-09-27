@@ -20,7 +20,7 @@ class TestDataReader {
 	 * the data is a student object.
 	 */
 	static getStudentData() {
-		var studentsRaw = fs.readFileSync('../testdata/students.json');
+		var studentsRaw = fs.readFileSync('./testdata/students.json');
 		var theStudents = new Map();
 		var students = JSON.parse(studentsRaw);
 		for (var i=0; i < students.length; i++ ) {
@@ -64,7 +64,7 @@ class TestDataReader {
 		console.log("loaded theBlocks->" + JSON.stringify(Array.from(theBlocks)));
 		return theBlocks;
 	}
-	static getPassData() {
+	static getPassData(forDate) {
 		var passRaw = fs.readFileSync('./testdata/passes.json');
 		var thePasses = new Map();
 		var passes = JSON.parse(passRaw);

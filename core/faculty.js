@@ -7,10 +7,11 @@ const DataIntegrity =  require('./data_integrity');
 
 class Faculty {
 	
-	constructor(aId,aName,aEmail,theRawSource) {
+	constructor(aId,aName,aEmail,aDepartment,theRawSource){
 		this.id = aId;
 		this.name = aName;
 		this.email = aEmail;
+		this.department = aDepartment;
 		this.rawSource = theRawSource;
 		this.theSchedule = new Schedule(aId);
 		if ( this.id == null || this.id == 0 ) {

@@ -4,6 +4,7 @@
  * for a faculty member or a student.
  */
 const DataIntegrity =  require('./data_integrity');
+const BlockCalculator =  require('./block_calculator');
 
 class Schedule {
 	
@@ -19,6 +20,9 @@ class Schedule {
 	}	
 	
 	setBlocks(block) {
+		if ( block.term != "FY" && block.term != BlockCalculator.getCurrentTerm()) {
+			return;
+		}
 		if ( Schedule.scheduleDisplayMap == null ) {
 			Schedule.initializeScheduleDisplayMap();
 		}
