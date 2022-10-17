@@ -16,6 +16,8 @@
     "express": "^4.17.2",
     "fs": "0.0.1-security",
     "http": "0.0.1-security",
-    "nodemailer": "^6.7.2"
+    "nodemailer": "^6.7.2",
+    "websocket": "^1.0.34",
+    "websockets": "^0.2.0"
   }
 }

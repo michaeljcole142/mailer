@@ -9,23 +9,17 @@ html
     p <br>	
     p Hello #{name},
     p
-    p See below a pass for you.
-    p       
-    
+    p See below a list of students in your homeroom with passes for today.
+    p Please remind each student to look for it in their email.      
+    br
+    p students-> #{students}
     br
     br
-    div.container.w-100.pass-layout-email
-      div.row
-        div.col-sm-12.pass-name-color.p-1
-          l Name: 
-          b.pass-name-color #{name}
-      div.row
-          div.col-sm-12.p-1 From: #{from}
-      div.row
-          div.col-sm-12.p-1 Time: #{datetime}
-      div.row
-        div.col-sm-12.p-1 Note: #{note}
-      br
+    ul
+      each val in students
+        li= val.student.name
+      else
+        li There are no values
     br
     br
     p  <a href="https://www.hcrhs.org"><u>www.hcrhs.org </u></a>

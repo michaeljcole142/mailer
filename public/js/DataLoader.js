@@ -8,9 +8,9 @@ class DataLoader {
 	constructor() {
 	}
 	
-	async initializeData(abDay,forDate) {	
+	async initializeData(forDate) {	
 		const rr = async()=> { 
-			var data={ "abDay":abDay, "forDate" : forDate };
+			var data={ "forDate" : forDate };
 			const response = await fetch('/initialize_data', {
 				method : 'POST' ,
 				headers: {'Content-Type': 'application/json'},

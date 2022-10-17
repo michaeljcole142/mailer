@@ -22,7 +22,7 @@ class PassHandler {
 	/*
 	 * decorate adds instance objects  
 	 */
-	decorate(studentMap,teacherMap) {
+	async decorate(studentMap,teacherMap) {
 		
 		var passesArray = Array.from(this.thePasses.values());
 		for ( var i=0; i < passesArray.length; i++ ) {
@@ -35,6 +35,7 @@ class PassHandler {
 				passAt.student = student;
 				var from = BlockCalculator.getBlockInfo(passAt.dateTime);
 				passAt.fromBlock=student.getScheduleBlock(from);
+				this.thePasses.set(passAt.id,passAt);
 			}
 		}
 		return;

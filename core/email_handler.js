@@ -7,31 +7,32 @@ const Email = require('email-templates');
  */
 
 class EmailHandler {
-	static mailerp = "ssycjnwyctovwrep";	
+	static mailerp = "aclhcywdjpnczngn"; //"fastpass2022" 	
 	constructor() {	
-		this.user = null;  //need initialization mechanism later.
+		this.user = 'HCPasses@hcrhs.org';  //need initialization mechanism later.
 		this.pwd = EmailHandler.mailerp;
 		if ( this.user == null ) {
 			this.user = 'wrestlingvision.info@gmail.com';
 		}
 		this.transporter = null;
+		this.prodTransporter=null;
 	}
 	async initialize() {
-		/*
-		this.transporter = await nodemailer.createTransport({
+
+		this.prodTransporter = await nodemailer.createTransport({
 			service: 'gmail.com',
 			auth: {
 				user: this.user,
 				pass: this.pwd
 			}
 		});
-		*/
+		
 		const anothertransporter = await nodemailer.createTransport({
 			host: 'smtp.ethereal.email',	
 			port: 587,
 			auth: {
-				user: 'reba.hagenes61@ethereal.email',
-				pass: 'wgmX6FqWRz4QdB1AUt'
+				user: 'tom.cole58@ethereal.email',
+				pass: 'Ag81kG1HmkfaQBrXeR'
 			}
 		});
 		this.transporter = anothertransporter;
@@ -39,6 +40,11 @@ class EmailHandler {
 	async sendPassToStudent(thePass) {
 		if ( this.transporter == null ) {
 			await this.initialize();
+		}
+		// THis is a HACK remove later.
+		if ( thePass.student == null || thePass.student.name == null ) {
+			console.log("ERROR: WHAT IS UP WITH NO STUDENT");
+			return;
 		}
 		var sender = { "name" : "PassFactory@HCRHS", "address" : this.user };
 
@@ -48,13 +54,14 @@ class EmailHandler {
 				subject: 'Student Pass Info'
 			},
 			send: true,
+			preview: false,
 			transport: this.transporter	
 		});
 		
 		email.send({
 			template: 'student_pass',
 			message: {
-				to: 'michaeljcole142@gmail.com'
+				to: thePass.student.email
 			},
 				locals: {
 					name: thePass.student.name,
@@ -65,12 +72,41 @@ class EmailHandler {
 		})
 		.catch(console.error);		
 	}
-	async sendTestEmail() {
+	async sendHRTeacher(teacher, passList) {
 		if ( this.transporter == null ) {
 			await this.initialize();
 		}
+		
+		var sender = { "name" : "PassFactory@HCRHS", "address" : this.user };
+
+		const email = new Email({
+			message: {
+				from: sender,
+				subject: 'Student Pass List'
+			},
+			send: true,
+			preview: false,
+			transport: this.transporter	
+		});
+		
+		email.send({
+			template: 'homeroom_teacher',
+			message: {
+				to: teacher.email
+			},
+				locals: {
+					students: passList,
+					name: teacher.name
+				}
+		})
+		.catch(console.error);		
+	}
+	async sendTestEmail() {
+		if ( this.prodTransporter == null ) {
+			await this.initialize();
+		}
 	
-		this.transporter.sendMail(
+		this.prodTransporter.sendMail(
 		{
 			from: this.user,
 			subject: 'test',
@@ -90,7 +126,8 @@ class EmailHandler {
 				subject: 'Test Email from Template'
 			},
 			// uncomment below to send emails in development/test env:
-			 send: true,
+			 send: false,
+			 preview: false,
 			transport: this.transporter	
 		});
 

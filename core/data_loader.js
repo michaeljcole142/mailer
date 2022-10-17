@@ -64,5 +64,14 @@ class DataLoader {
 			throw Error("Unknown Production Mode!!!");
 		}
 	}
+	static async getABDay(dt) {
+		if ( ProdMode.isProductionModeTest() ) {
+			return await TestDataReader.getABDay(dt);
+		} else if ( ProdMode.isProductionModeProd() ) {
+			return await ProdDataReader.getABDay(dt);
+		} else {
+			throw Error("Unknown Production Mode!!!");
+		}
+	}
 }
 module.exports = DataLoader;

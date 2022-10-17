@@ -102,25 +102,33 @@ class ViewBuilder {
 			var tr = document.createElement("tr");
 			tab.appendChild(tr);
 			var td = document.createElement("td");
-			td.innerHTML=passesData[i].studentId;
+			td.innerHTML=passesData[i].student.id;
 			tr.appendChild(td);
 			
 			td = document.createElement("td");
-			td.innerHTML=passesData[i].studentName;
+			td.innerHTML=passesData[i].student.name;
 			tr.appendChild(td);
 			td = document.createElement("td");
-			td.innerHTML=passesData[i].studentEmail;
+			td.innerHTML=passesData[i].student.email;
 			tr.appendChild(td);
 			
 			td = document.createElement("td");
 			td.innerHTML=passesData[i].homeRoomNumber;
 			tr.appendChild(td);
 			td = document.createElement("td");
-			td.innerHTML=passesData[i].homeRoomTeacherName;
+			if ( passesData[i].homeRoomTeacher != null ) {
+				td.innerHTML=passesData[i].homeRoomTeacher.name;
+			} else {
+				td.innerHTML="";
+			}
 			tr.appendChild(td);
 			
 			td = document.createElement("td");
-			td.innerHTML=passesData[i].homeRoomTeacherEmail;
+					if ( passesData[i].homeRoomTeacher != null ) {
+				td.innerHTML=passesData[i].homeRoomTeacher.email;
+			} else {
+				td.innerHTML="";
+			}
 			tr.appendChild(td);
 			
 			td = document.createElement("td");		

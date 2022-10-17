@@ -20,6 +20,18 @@ class BlockCalculator {
 			BlockCalculator.ABDay = abIn;
 		}
 	}
+	static isADay() {
+		if ( BlockCalculator.ABDay=="A") {
+			return true;
+		}
+		return false;
+	}
+	static isBDay() { 
+		if ( BlockCalculator.ABDay=="B") {
+			return true;
+		}
+		return false;
+	}
 	static getCurrentTerm() {
 		return "S1";
 	}

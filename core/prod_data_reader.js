@@ -116,7 +116,7 @@ class ProdDataReader
 		for (var i=0; i < f.length; i++ )
 		{  
 			var fac = new Faculty(parseInt(f[i].stateId), f[i].nameView, f[i].person.email01, f[i].departmentCode);
-			theFaculty.set(f[i].stateId,fac);
+			theFaculty.set(fac.id,fac);
 		} 
 		return theFaculty;
 	}
@@ -159,7 +159,6 @@ class ProdDataReader
 				theSched.set(s[i].courseView, b);
 			}
 		}
-		//console.log("loaded theSched->" + JSON.stringify(Array.from(theSched)));
 		return theSched;
 	}
 
@@ -175,12 +174,29 @@ class ProdDataReader
 
 	static async getDayBellSched(d) 
 	{
-		//console.log("df is " + d);
 		var db =  await ProdDataReader.getData(url + "daybell?date=" + d);
-		//console.log("db is " + JSON.stringify(db));
-		//ProdDataReader.jsonToFile('daybell', db);
-		//console.log("Done");
 	}
+	static async getABDay(d)
+	{
+		var day;
+		console.log("date is " + d);
+		var db =  await ProdDataReader.getData(url + "dateToAB?date=" + d);
+		console.log("db is " + JSON.stringify(db));
+
+		console.log("schedule day number is " + db[0].scheduleDayNumber);
+		switch (db[0].scheduleDayNumber)
+		{
+			case 1:
+				day = "A";
+				break;
+			case 2:
+				day = "B";
+				break;
+		}
+		return(day);
+	}
+	
+	
 } //end class ProdDataReader
 
 module.exports = ProdDataReader;

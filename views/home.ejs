@@ -29,14 +29,18 @@ table, th, td {
 		<br>
 		<h1>Welcome to Pass Something</h1>
 		<br>
+		
 		<button id="initialize-load-btn" class="ml-4" onclick="theController.initializeData()">Initialize Load</button>
-		<label>A/B Day</label><input maxlength="1" size="1" type="text" class="ml-2" id="block-day"></input><label class="ml-2">Date(yyyy-mm-dd):</label> <input maxlength="10" size="10" class="ml-2" type="text" id="for-date"></input>
+		<label class="ml-2">Date(yyyy-mm-dd):</label> <input maxlength="10" size="10" class="ml-2" type="text" id="for-date"></input>
 		<br>
 		<label id="integrity-processing" class="d-none ml-4">Please wait while the server processes initialization...</label>
 		<br>
 		<ul class="nav nav-tabs" id="myTab" role="tablist">
 			<li class="nav-item">
 				<a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Home</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" id="message-tab" data-toggle="tab" href="#messages" role="tab" aria-controls="messages" aria-selected="true">Messaging Sandbox</a>
 			</li>
 			<li class="nav-item">
 				<a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Students</a>
@@ -55,6 +59,28 @@ table, th, td {
 			</li>
 		</ul>
 		<div class="tab-content" id="myTabContent">
+			<div class="tab-pane fade" id="messages" role="tabpanel" aria-labelledby="messages-tab">
+				<section id="message-sec">
+				<div>
+					<label>UserName:</label>
+					<input type="text" id="user-name"></input>
+					<br>
+					<label>Location:</label>
+					<input type="text" id="location"></input>
+					<br>
+					<label>To User:</label>
+					<input type="text" id="to-user"></input>
+					<br>
+					<button id="close-test" onclick="closeTestFunc(event)">close</button>
+					<button id="open-test" onclick="openTestFunc(event)">open</button>
+					<input id="message-text" type="text" oninput="messageInputFunc(event)"></input>
+					<button id="open-semd" onclick="sendTestFunc(event)">send</button>
+
+					<label>WebSocket here</label>
+					<div id="content"></div>
+				</div>
+				</section>
+			</div>
 			<div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
 				<section id="Integrity">
 				<div id="integrity-div">
@@ -159,7 +185,62 @@ table, th, td {
 
 <script>
 var theController = new Controller();
+ 
+var content = document.getElementById('content');
+var socket=null;
+var creds=null;
 
+  
+function openTestFunc(e) {
+	console.log("in open test func");
+	socket = new WebSocket('ws://localhost:1337');
+    console.log("here1");
+	socket.onopen = function () {
+		creds={func:'signin', userName:document.getElementById("user-name").value,location:document.getElementById("location").value};
+        socket.send(JSON.stringify(creds));
+    };
+	  console.log("here2");
+	socket.onmessage = receiveMessage;
+  console.log("here3");
+    socket.onerror = function (error) {
+        console.log('WebSocket error: ' + error);
+    };
+	console.log("here4");
+}
+function receiveMessage(message) {
+console.log("receving->" + message.data);
+		var msg=JSON.parse(message.data);
+		if ( msg.func =="signinsuccess" ) {
+			content.innerHTML += "SUCCESS SIGNIN: " + msg.message  + '<br />';
+
+		} else if ( msg.func == "successSendMessage" ) {
+			content.innerHTML += "SUCCESS SEND: " + msg.message  + '<br />';
+
+		} else if ( msg.func == "sendMessage" ) {
+			content.innerHTML += "From: " + msg.userName + " ->" + msg.message  + '<br />';
+		} else {
+			content.innerHTML += "Unknown message->"  + JSON.stringify(msg) + '<br>';
+		}
+}
+function closeTestFunc(e) {
+	console.log("in close test func");
+	socket.send (JSON.stringify({ func: 'close'} )) ;
+
+	socket.close(3021);
+}
+function messageInputFunc(e) {
+	console.log("messageInputFunc" + document.getElementById(e.srcElement.id).value);
+
+}
+function sendTestFunc(e) {
+	console.log("sendTestFunc->" + document.getElementById(e.srcElement.id).value);
+	var message=document.getElementById("message-text").value;
+	creds.func='sendMessage';
+	creds.message=message;
+	creds.toUser=document.getElementById("to-user").value;
+
+	socket.send(JSON.stringify(creds));
+}
 </script>
 
 </html>

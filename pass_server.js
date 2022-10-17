@@ -7,6 +7,55 @@ const bodyparser = require("body-parser");
 const PassFactory = require("./core/pass_factory");
 const DataIntegrity = require("./core/data_integrity");
 
+
+//WEBSOCKETS START
+var server = require('websocket').server, http = require('http');
+var userMap=new Map();
+var socket = new server({  
+    httpServer: http.createServer().listen(1337)
+});
+var count=1;
+socket.on('request', function(request) {  
+
+    var connection = request.accept(null, request.origin);
+console.log("made connection->" + connection.constructor.name);
+console.log("connection.closeDescription->" + connection.closeDescription);
+console.log("connection.closeReasonCode->" + connection.closeReasonCode);
+console.log("connection.protocol->" + connection.protocol);
+console.log("connection.extensions->" + connection.extensions);
+console.log("connection.remoteAddress->" + connection.remoteAddress);
+console.log("connection.webSocketVersion->" + connection.webSocketVersion);
+console.log("connection.connected->" + connection.connected);
+
+    connection.on('message',async  function(message) {
+		console.log("got message->" + message.utf8Data + " from->" + connection.myuser);
+		var userData=JSON.parse(message.utf8Data);
+		if ( userData.func == "signin") {
+			connection.myuser=userData.userName;
+			userMap.set(userData.userName,connection);
+			console.log("siginging in->" + userData.userName);
+			connection.send(JSON.stringify( { func: 'signinsuccess' , message: 'hello ' + userData.userName + ", we will set you up for location " + userData.location }));
+
+			console.log("sent");
+		} else if ( userData.func == "sendMessage" ) {
+			var toUser = userMap.get(userData.toUser);
+			if ( toUser == null ) {
+				connection.send("can't find->" + userData.toUser ) ;
+			} else {
+				toUser.send(JSON.stringify(userData));
+				connection.send( JSON.stringify({func:"successSendMessage", message: "message was sent to->" + userData.toUser}));
+			}
+		} else { 
+			connection.send("Sorry, I don't understand what you are asking for.");
+		}	
+    });
+
+    connection.on('close', function(connection) {
+        console.log('connection closed->' + JSON.stringify(connection));
+    });
+});
+// END OF WEBSOCKETS CODE
+
 console.log("starting server...");
 
 //Middle ware
@@ -88,7 +137,7 @@ app.post("/initialize_data", (req, res)=>{
 		var j = JSON.stringify(req.body);
 		var data = JSON.parse(j);
 		console.log("in initialize_data call->" + JSON.stringify(data));
-		await thePassFactory.initialize(data.abDay, data.forDate);
+		await thePassFactory.initialize( data.forDate);
 		res.status(200).send(JSON.stringify(DataIntegrity.issues)); 	
 	} )();
 });
@@ -130,6 +179,15 @@ app.post("/get_decorated_passes", (req, res)=>{
 		var data = JSON.parse(j);
 		var rr=await thePassFactory.getDecoratedPasses(); 	
 		res.status(200).send(JSON.stringify(rr)); 	
+	} )();
+});
+app.get("/send_test_email", (req, res)=>{   
+	console.log("in send_test_email");
+	(async() =>  { 
+		var j = JSON.stringify(req.body);
+		var data = JSON.parse(j);
+		var rr=await thePassFactory.theEmailHandler.sendTestEmail(); 	
+		res.status(200).send("Sent test email"); 	
 	} )();
 });
 /*

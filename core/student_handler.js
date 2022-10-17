@@ -26,9 +26,6 @@ class StudentHandler {
 				this.theStudentsByEmail.set(sv[i].email,sv[i]);
 			}
 		}
-	//  var sk = Array.from(this.theStudents.keys());
-	//	console.log("StudentKeys->" + JSON.stringify(sk));
-	//console.log("Students->" + JSON.stringify(sv));
 	}
 	
 
