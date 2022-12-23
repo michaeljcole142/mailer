@@ -14,8 +14,11 @@ class StudentHandler {
 	}	
 	
 	async initialize() {
+		console.log("before getstudentdata in student handler");
 		this.theStudents = await DataLoader.getStudentData();
 		var sv = Array.from(this.theStudents.values());
+		console.log("sv.length->" + sv.length);
+
 		for ( var i=0; i < sv.length; i++ ) {
 			if ( this.theStudentsByEmail.has(sv[i].email) ) {
 				//ignore null emails. already logged.

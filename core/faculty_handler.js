@@ -17,7 +17,10 @@ class FacultyHandler {
 		this.theFaculty = await DataLoader.getFacultyData();
 		var fv = Array.from(this.theFaculty.values());
 		for ( var i=0; i < fv.length; i++ ) {
-
+console.log("PUSHING Faculty->" + fv[i].email ); 
+if ( fv[i].email == null ) {
+	console.log("FOUND BLLLLLLANK------>" + JSON.stringify(fv[i]));
+}
 			if ( this.theFacultyByEmail.has(fv[i].email) ) {
 				//ignore null emails. already logged.
 				if ( fv[i].email != null ) {

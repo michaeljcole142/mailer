@@ -9,6 +9,7 @@ class Pass {
 		this.studentId = parseInt(aStudentId);
 		this.student = null;
 		this.fromBlock = null; 
+		this.homeRoomBlock = null;
 		this.dateTime = aDateTime;
 		this.note = aNote;
 	}	

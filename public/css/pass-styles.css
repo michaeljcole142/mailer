@@ -1,14 +1,25 @@
 /* CSS Variables */
 .pass-layout-email {
-  background-color: white;
+  background-color: yellow;
   color:black;
   font-size:14px;
-  width: 99%;
+  width: 75%;
   border-radius: 5px;
   border-color: black;
   border: solid 1px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.24);
 }
 
-.pass-name-color {
+.pass-line {
 	color: black;
+	text-decoration: underline;
+}
+.pass-line-l {
+	font-weight: bold;
+	color: green;
+}
+.pass-title {
+	font-size:22px;
+	text-align:center;
+	font-weight:bold;
 }

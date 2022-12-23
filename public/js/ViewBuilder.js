@@ -115,6 +115,7 @@ class ViewBuilder {
 			td = document.createElement("td");
 			td.innerHTML=passesData[i].homeRoomNumber;
 			tr.appendChild(td);
+			
 			td = document.createElement("td");
 			if ( passesData[i].homeRoomTeacher != null ) {
 				td.innerHTML=passesData[i].homeRoomTeacher.name;
@@ -122,10 +123,28 @@ class ViewBuilder {
 				td.innerHTML="";
 			}
 			tr.appendChild(td);
-			
 			td = document.createElement("td");
 					if ( passesData[i].homeRoomTeacher != null ) {
 				td.innerHTML=passesData[i].homeRoomTeacher.email;
+			} else {
+				td.innerHTML="";
+			}
+			tr.appendChild(td);
+			
+			td = document.createElement("td");
+			td.innerHTML=passesData[i].fromRoomNumber;
+			tr.appendChild(td);
+			td = document.createElement("td");
+			if ( passesData[i].fromRoomTeacher != null ) {
+				td.innerHTML=passesData[i].fromRoomTeacher.name;
+			} else {
+				td.innerHTML="";
+			}
+			tr.appendChild(td);
+			
+			td = document.createElement("td");
+					if ( passesData[i].fromRoomTeacher != null ) {
+				td.innerHTML=passesData[i].fromRoomTeacher.email;
 			} else {
 				td.innerHTML="";
 			}

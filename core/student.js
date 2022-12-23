@@ -6,9 +6,12 @@ const DataIntegrity =  require('./data_integrity');
 
 class Student {
 	
-	constructor(aId,aName,aEmail,theRawSource) {
+	constructor(aId,aFullName,aFirstName, aLastName,aEmail,theRawSource) {
+console.log("setting ->" + aFullName + " to->"  + aFirstName + " " + aLastName );		
 		this.id = aId;
-		this.name = aName;
+		this.name = aFullName;
+		this.fName = aFirstName;
+		this.lName = aLastName
 		this.email = aEmail;
 		this.rawSource=theRawSource;
 		this.theSchedule = new Schedule(aId);
@@ -24,6 +27,9 @@ class Student {
 	}	
 	getScheduleBlock(blockName) {
 		return this.theSchedule.getBlock(blockName);
+	}
+	getHomeRoomBlock(aBDay) {
+		return this.theSchedule.getBlock(aBDay + "1");
 	}
 	
 }

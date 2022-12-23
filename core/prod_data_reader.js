@@ -1,6 +1,8 @@
 const Student = require('./student');
 const Faculty = require('./faculty');
 const Course = require('./course');
+const Room = require('./room');
+
 const Schedule = require('./schedule');
 const MasterSchedule = require('./master_schedule');
 const Pass = require('./pass');
@@ -29,16 +31,20 @@ class ProdDataReader
 	} //End getKey
 
   
-	static getData = async (url) =>
-	{
+	static async getData(url){
+		console.log("url->" + url);
 		var secretKey = await ProdDataReader.getKey();
 		var options = { headers:{ Authorization: ' Bearer ' + secretKey }};
-		try { 
+		try {
+console.log("here1");			
 			const res = await axios.get(url, options);
+console.log("here2");
 			const d = await res.data;
+console.log("here3");
 			return d;
 		} catch (e) {
-			console.log("e->" + e);
+			console.log("e.message->" + e.message);
+			console.log("ez->" + e.stack);
 		}
 		return null;
 	} //end getData
@@ -63,14 +69,17 @@ class ProdDataReader
 
 	static async getStudentData() 
 	{
+		console.log("GETSTUDENTDATA");
 		var theStudents = new Map();
-		var std =  await ProdDataReader.getData(url + "students?status=Active");
+		var std =  await ProdDataReader.getData(url + "students2?status=Active");
+console.log("std.length->" + std.length);
+
 		for (var i=0; i < std.length; i++ ) 
 		{
 			//1's are OUT.
 			if (std[i].fieldB017 != "1")
 			{
-				var s=new Student(parseInt(std[i].localId), std[i].nameView, std[i].person.email01,std[i]);
+				var s=new Student(parseInt(std[i].localId), std[i].nameView, std[i].person.firstName, std[i].person.lastName, std[i].person.email01,std[i]);
 				theStudents.set(s.id,s);
 			} 
 		}
@@ -112,10 +121,11 @@ class ProdDataReader
 	static async getFacultyData()
 	{
 		var theFaculty = new Map();
-		var f =  await ProdDataReader.getData(url + "staff2?status=Active");
+		var f =  await ProdDataReader.getData(url + "staff?status=Active");
 		for (var i=0; i < f.length; i++ )
 		{  
-			var fac = new Faculty(parseInt(f[i].stateId), f[i].nameView, f[i].person.email01, f[i].departmentCode);
+			var fac = new Faculty(parseInt(f[i].stateId), f[i].nameView, f[i].person.firstName, f[i].person.lastName, f[i].person.email01, f[i].departmentCode);
+			console.log("facccc->" + JSON.stringify(fac));
 			theFaculty.set(fac.id,fac);
 		} 
 		return theFaculty;
@@ -178,7 +188,7 @@ class ProdDataReader
 	}
 	static async getABDay(d)
 	{
-		var day;
+		var day="";
 		console.log("date is " + d);
 		var db =  await ProdDataReader.getData(url + "dateToAB?date=" + d);
 		console.log("db is " + JSON.stringify(db));
@@ -195,7 +205,17 @@ class ProdDataReader
 		}
 		return(day);
 	}
-	
+	static async getRoomData()
+	{
+		var theRooms = new Map();
+		var rm =  await ProdDataReader.getData(url + "rooms");
+		for (var i=0; i < rm.length; i++ )
+		{
+			var r=new Room(rm[i].roomNumber, rm[i].departmentCode, rm[i].roomTypeCode, rm[i].buildingCode, rm[i].fieldC001, rm[i].locationCode, rm[i].maxCapacity);
+			theRooms.set(rm[i].roomNumber,r);  
+		}
+		return theRooms;
+	}
 	
 } //end class ProdDataReader
 

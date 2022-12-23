@@ -15,59 +15,27 @@ const ProdMode = require('./prod_mode');
 const MasterScheduleHandler = require('./master_schedule_handler');
 const BlockCalculator = require('./block_calculator');
 const DataLoader = require('./data_loader');
-
+const SchoolFactory = require('./school_factory');
 
 class PassFactory {
 	
 	constructor() {
-		
-		this.theProdMode = null;
-		this.theStudentHandler = null;
-		this.theFacultyHandler = null;
-		this.theCourseHandler = null;
-		this.theBlockHandler = null;
-		this.theMasterScheduleHandler = null;
-		this.thePassHandler = null;
+		this.theSchoolFactory = new SchoolFactory();
+		this.thePassHandler = new PassHandler();
 		this.theEmailHandler = new EmailHandler();
-		this.sendEmail=false;
+		this.sendEmail=true;
 	}	
 	
 	async initialize(forDate) {
 		console.log("in PassFactory.initialize()");
-		this.theProdMode = new ProdMode();
-		var abDay = await DataLoader.getABDay(forDate);
-		console.log("ABDAY----->" + abDay);
-		BlockCalculator.setABDay(abDay);
-		
-		this.forDate = forDate;
-		
-		this.theStudentHandler = new StudentHandler();
-		this.theFacultyHandler = new FacultyHandler();
-		this.theCourseHandler = new CourseHandler();
-		this.theBlockHandler = new BlockHandler();
-		this.theMasterScheduleHandler = new MasterScheduleHandler();
-		this.thePassHandler = new PassHandler();
-
-
 		/*
 		 * First step of loading all the data and getting it ready
 		 * to process is to initialize all the datasets from the loaders.
 		 * Or read it in from it source.
 		 */
-		console.log("Initializing the Pass Factory...");
-		console.log("\tInitializing theStudentHandler...");
-		await this.theStudentHandler.initialize();
-		console.log("\tFinished initializing theStudentHandler...");
-		console.log("\tInitializing theFacultyHandler...");
-		await this.theFacultyHandler.initialize();
-		console.log("\tFinished initializing theFacultyHandler...");
-		console.log("\tInitializing theCourseHandler...");
-		await this.theCourseHandler.initialize();
-		console.log("\tFinished initializing theCourseHandler...");
-		console.log("\tInitializing theMasterScheduleHandler...");
-		await this.theMasterScheduleHandler.initialize();
-		console.log("\tFinished initializing theMasterScheduleHandler...");
-		console.log("\tInitializing thePassHandler...");
+		console.log("Initializing the School Factory...");
+		await this.theSchoolFactory.initialize(forDate);
+
 		await this.thePassHandler.initialize(forDate);
 		console.log("\tFinished initializing thePassHandler for " + forDate + "...");
 		/*
@@ -81,8 +49,6 @@ class PassFactory {
 		await this.decorateDataObjects();
 		console.log("Finished Decorating the data objects...");
 		DataIntegrity.print();
-		
-		this.emailPasses();
 	}
 	async decorateDataObjects() {
 		/* 
@@ -90,19 +56,9 @@ class PassFactory {
 		 * and students for the id's loaded.  Returns a set of referential
 		 * integrity problems.  
 		 */
-		 /*
-		 this.theBlockHandler.decorate(
-			this.theStudentHandler.theStudents,
-			this.theFacultyHandler.theFaculty,
-			this.theCourseHandler.theCourses);
-*/		this.theMasterScheduleHandler.decorate(
-			this.theFacultyHandler.theFacultyByEmail,this.theStudentHandler.theStudents);			
-
+		await this.theSchoolFactory.decorateDataObjects();
 		await this.thePassHandler.decorate(
-			this.theStudentHandler.theStudents);
-		
-//		DataIntegrity.print();
-//		this.printPasses();
+			this.theSchoolFactory.theStudentHandler.theStudents);
 	}
 	printPasses() {
 		var p=Array.from(this.thePassHandler.thePasses.values());
@@ -111,45 +67,96 @@ class PassFactory {
 		}
 	}
 	async emailPasses() {
+console.log("emailingPasses");
+
 		// this is the student section.
 		var passes = await this.getDecoratedPasses();
-		var teacherList = new Map();
-		console.log("sending email passes to " + passes.length + " students");
+		var teacherHRList = new Map();
+		var teacherFromList = new Map();
+		var masterTeacherList = new Map();
+		console.log("sending student email passes to " + passes.length + " students");
 		var studentCt=0;
 		var teacherCt=0;
 		for ( var i=0; i < passes.length; i++ ) {
-			var passAt = passes[i];
-			
+			var passAt = passes[i];	
 			studentCt++;
-			if ( this.sendEmail ) {
-				this.theEmailHandler.sendPassToStudent(passAt);
+			if ( this.sendEmail &&  passAt.student != null ) {
+				console.log("send student email number->" + studentCt + " to->" + passAt.student.email);
+				await this.theEmailHandler.sendPassToStudent(passAt);
+				console.log("sleeping...");
+				await sleep(3000);
+				console.log("woke up...");
 			}
 			if ( passAt.homeRoomTeacher != null ) {
-				var at = teacherList.get(passAt.homeRoomTeacher.id);
+				var at = teacherHRList.get(passAt.homeRoomTeacher.id);
 				if ( at == null ) {
-					teacherList.set(passAt.homeRoomTeacher.id,[passAt]);
+					var l=[];
+					l.push(passAt);
+					teacherHRList.set(passAt.homeRoomTeacher.id,l);
 				} else {
 					at.push(passAt);
-					teacherList.set(passAt.homeRoomTeacher.id,at);
+					teacherHRList.set(passAt.homeRoomTeacher.id,at);
+				}
+				//master list transition
+				var atM = masterTeacherList.get(passAt.homeRoomTeacher.id);
+				if ( atM == null ) {
+					var notify={};
+					notify.homeRoomList = [passAt];
+					notify.blockLeaveList = [];
+					masterTeacherList.set(passAt.homeRoomTeacher.id,notify);
+				} else {
+					atM.homeRoomList.push(passAt);
+					masterTeacherList.set(passAt.homeRoomTeacher.id,atM);
 				}
 			}
-		}	
-		console.log("teacher count->" + teacherList.size);
-		console.log("passes length->" + passes.length);
-		var teacher=Array.from(teacherList.entries());
-		for ( var i=0; i < teacher.length; i++ ) {
-			teacherCt++;
-			var teacherAt = this.theFacultyHandler.theFaculty.get(parseInt(teacher[i][0]));
-			if ( teacherAt != null && teacherAt.email != null) {
-				if ( this.sendEmail == true ) {
-					this.theEmailHandler.sendHRTeacher(teacherAt,teacher[i][1]);
+			if ( passAt.fromRoomTeacher != null ) {
+				var at = teacherFromList.get(passAt.fromRoomTeacher.id);
+				if ( at == null ) {
+					teacherFromList.set(passAt.fromRoomTeacher.id,[passAt]);
+				} else {
+					at.push(passAt);
+					teacherFromList.set(passAt.fromRoomTeacher.id,at);
+				}
+				//master list transition
+				var atM = masterTeacherList.get(passAt.fromRoomTeacher.id);
+				if ( atM == null ) {
+					var notify={};
+					notify.homeRoomList = [];
+					notify.blockLeaveList = [passAt];
+					masterTeacherList.set(passAt.fromRoomTeacher.id,notify);
+				} else {
+					atM.blockLeaveList.push(passAt);
+					masterTeacherList.set(passAt.fromRoomTeacher.id,atM);
 				}
 			}
 		}
 		console.log("sent emails to students->" + studentCt);
-		console.log("sent emails to teachers->" + teacherCt);
 		console.log("send email flag->" + this.sendEmail);
+		var tt=Array.from(masterTeacherList);
+		console.log("#######################");
+		for (var i=0; i < tt.length; i++ ) {
+		//	console.log("##->" + JSON.stringify(tt[i]));
+			var teacherAt = this.theSchoolFactory.theFacultyHandler.theFaculty.get(parseInt(tt[i][0]));
+			await this.theEmailHandler.sendTeacherEmail(teacherAt,tt[i][1]);
+			await sleep(3000);
+		}
+		console.log("#########################");
+		console.log("sent emails to teachers->" + tt.length);
+		
 	}
+	async emailTestStudentPass() {
+		var passes = await this.getDecoratedPasses();
+console.log("emailTestStudentPass");
+		var testPass=passes[0];
+		var oe=testPass.student.email;
+		testPass.student.email="michael.cole@hcrhs.org";
+		console.log("oldemail->" + oe);
+		console.log("testPass->" + JSON.stringify(testPass));
+		await this.theEmailHandler.sendPassToStudent(testPass);
+		testPass.student.email=oe;
+		console.log("now email is->" + passes[0].student.email);
+	}	
+		
 	async getDecoratedPasses() {
 		var dp = [];
 		var passes = Array.from(this.thePassHandler.thePasses.values());
@@ -157,17 +164,13 @@ class PassFactory {
 			var here=false;	
 			var facultyAt=null;
 			if ( passes[i].student != null ) {
-				if ( BlockCalculator.isADay() ) {
-					if ( passes[i].student.theSchedule.ADayBlocks[0] != null ) {
-						passes[i].homeRoomNumber=passes[i].student.theSchedule.ADayBlocks[0].room;
-						passes[i].homeRoomTeacher = this.theFacultyHandler.theFacultyByEmail.get(passes[i].student.theSchedule.ADayBlocks[0].primaryEmail);
-					}
-				} else {
-					if ( passes[i].student.theSchedule.BDayBlocks[0] != null ) {
-						passes[i].homeRoomNumber=passes[i].student.theSchedule.BDayBlocks[0].room;
-						passes[i].homeRoomTeacher = this.theFacultyHandler.theFacultyByEmail.get(passes[i].student.theSchedule.BDayBlocks[0].primaryEmail);				
-					}
+				passes[i].homeRoomNumber = passes[i].homeRoomBlock.room;
+				passes[i].homeRoomTeacher = this.theSchoolFactory.theFacultyHandler.theFacultyByEmail.get(passes[i].homeRoomBlock.primaryEmail);
+				if ( passes[i].fromBlock != null ) {
+					passes[i].fromRoomNumber = passes[i].fromBlock.room;
+					passes[i].fromRoomTeacher = this.theSchoolFactory.theFacultyHandler.theFacultyByEmail.get(passes[i].fromBlock.primaryEmail);
 				}
+	
 			} else {
 				console.log("ERROR:  Can not send pass to empty students->" + JSON.stringify(passes[i]));
 
@@ -175,5 +178,8 @@ class PassFactory {
 		}
 		return passes;
 	}
+}
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
 module.exports = PassFactory;

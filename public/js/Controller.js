@@ -24,7 +24,9 @@ class Controller {
 		var x = new DataLoader();
 		var vb = new ViewBuilder();
 		vb.setProcessingLoadOn();
-		var ret = await x.initializeData(dateFor)
+		var ret = await x.initializeData(dateFor);
+		
+		
 		vb.buildDataIntegrityTable(ret);
 		vb.buildDataIntegrityCounts(ret);
 		vb.setProcessingLoadOff();
@@ -38,4 +40,31 @@ class Controller {
 		var dp = await x.getDecoratedPasses();
 		vb.buildDecoratePassesTab(dp);
 	}
+	async emailPasses() {
+		var dateFor = document.getElementById("for-date").value;
+	
+		if ( Controller.isProcessing ) { 
+			alert("controller is processing.  Please wait...");
+			return;
+		}
+		Controller.isProcessing = true;
+		console.log("emailing!");
+		var x = new DataLoader();
+		var ret = await x.emailPasses();
+		console.log("ret->" + JSON.stringify(ret));
+	}
+	async emailTestPasses() {
+		var dateFor = document.getElementById("for-date").value;
+	
+		if ( Controller.isProcessing ) { 
+			alert("controller is processing.  Please wait...");
+			return;
+		}
+		Controller.isProcessing = true;
+		console.log("emailing!");
+		var x = new DataLoader();
+		var ret = await x.emailTestPasses();
+		console.log("ret->" + JSON.stringify(ret));
+	}
 }
+module.exports = Controller;

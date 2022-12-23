@@ -11,17 +11,23 @@ html
     p
     p
     p See below a list of students in your homeroom with passes for today.
-    p Please remind each student to look for it in their email.      
-    br
+    p Please remind each student to look for it in their email. 
     p 
+    p Below that is a list of students with passes that will be leaving
+    p during your blocks today.	
     br
-    br
+    p Homeroom students with passes:
     ul
       each val in students
         li= val.student.name
       else
-        li There are no values
-    br
+        li There are no student passes for homeroom.
+    p Students with passes during day:
+    ul
+      each vval in passes
+        li= vval.block + " - " + vval.name + "   Time: " + vval.dtS  + " Note: " + vval.note
+      else
+        li There are no students leaving your blocks.
     br
     p  <a href="https://www.hcrhs.org"><u>www.hcrhs.org </u></a>
     p <img src="../public/images/HCLogo.PNG"></img>

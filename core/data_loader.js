@@ -28,6 +28,15 @@ class DataLoader {
 			throw Error("Unknown Production Mode!!!");
 		}
 	}
+	static async getRoomData() {
+		if ( ProdMode.isProductionModeTest() ) {
+			return await TestDataReader.getRoomData();
+		} else if ( ProdMode.isProductionModeProd() ) {
+			return await ProdDataReader.getRoomData();
+		} else {
+			throw Error("Unknown Production Mode!!!");
+		}
+	}
 	static async getCourseData() {
 		if ( ProdMode.isProductionModeTest() ) {
 			return await TestDataReader.getCourseData();

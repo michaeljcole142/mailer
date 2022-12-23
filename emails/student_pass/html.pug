@@ -7,7 +7,7 @@ html
     link(href="../public/css/pass-styles.css",rel="stylesheet") 
   body
     p <br>	
-    p Hello #{name},
+    p Hello #{fname},
     p
     p See below a pass for you.
     p       
@@ -16,17 +16,25 @@ html
     br
     div.container.w-100.pass-layout-email
       div.row
-        div.col-sm-12.pass-name-color.p-1
-          l Name: 
-          b.pass-name-color #{name}
+        div.col-sm-12.pass-title.p-1 PASS
       div.row
-          div.col-sm-12.p-1 From: #{from}
+        div.col-sm-12.p-1
+          <label class='pass-line-l'>Name:</label> 
+          <label class='pass-line ml-2'>#{name}</label>
       div.row
-          div.col-sm-12.p-1 Time: #{datetime}
+        div.col-sm-12.p-1 
+          <label class='pass-line-l'>From:</label>
+          <label class='pass-line ml-2'>#{from}</label>
       div.row
-        div.col-sm-12.p-1 Note: #{note}
+        div.col-sm-12.p-1 
+          <label class='pass-line-l'>Time:</label> 
+          <label class='pass-line ml-2'>#{datetime}</label>
+      div.row
+        div.col-sm-12.p-1 
+          <label class='pass-line-l'>Note:</label> 
+          <label class='pass-line ml-2'>#{note}</label>
       br
     br
     br
     p  <a href="https://www.hcrhs.org"><u>www.hcrhs.org </u></a>
-    p <img src="../public/images/HCLogo.PNG"></img>
+    p <img src="./images/HCLogo.PNG"></img>

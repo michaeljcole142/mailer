@@ -16,8 +16,12 @@ class PassHandler {
 	}	
 	
 	async initialize(forDate) {
-		this.forDate=forDate;
-		this.thePasses = await DataLoader.getPassData(forDate);
+		try {
+			this.forDate=forDate;
+			this.thePasses = await DataLoader.getPassData(forDate);
+		} catch (e) {
+			console.log("ERROR-->" + e.stack);
+		}
 	}
 	/*
 	 * decorate adds instance objects  
@@ -34,7 +38,9 @@ class PassHandler {
 			} else {
 				passAt.student = student;
 				var from = BlockCalculator.getBlockInfo(passAt.dateTime);
+				console.log("got block->" + from);
 				passAt.fromBlock=student.getScheduleBlock(from);
+				passAt.homeRoomBlock=student.getHomeRoomBlock(BlockCalculator.ABDay);
 				this.thePasses.set(passAt.id,passAt);
 			}
 		}

@@ -31,7 +31,10 @@ table, th, td {
 		<br>
 		
 		<button id="initialize-load-btn" class="ml-4" onclick="theController.initializeData()">Initialize Load</button>
+		<button id="initialize-load-btn" class="ml-4" onclick="theController.emailPasses()">Send Pass Emails</button>
 		<label class="ml-2">Date(yyyy-mm-dd):</label> <input maxlength="10" size="10" class="ml-2" type="text" id="for-date"></input>
+		<br>
+		<button id="initialize-load-btn" class="ml-4" onclick="theController.emailTestPasses()">Send TEST Pass Emails</button>
 		<br>
 		<label id="integrity-processing" class="d-none ml-4">Please wait while the server processes initialization...</label>
 		<br>
@@ -161,13 +164,17 @@ table, th, td {
 				<table style="width=100%">
 					<thead>
 						<tr>
-							<th style="width:10%">Student Id</th>
-							<th style="width:10%">Student Name</th>
-							<th style="width:10%">Student Email</th>
-							<th style="width:10%">HR</th>
-							<th style="width:10%">HR Teacher</th>
-							<th style="width:10">HR Email</th>
-							<th style="width:10%">Time</th>
+							<th style="width:8%">Student Id</th>
+							<th style="width:8%">Student Name</th>
+							<th style="width:8%">Student Email</th>
+							<th style="width:8%">HR</th>
+							<th style="width:8%">HR Teacher</th>
+							<th style="width:8%">HR Email</th>
+							<th style="width:8%">From</th>
+							<th style="width:8%">From Teacher</th>	
+							<th style="width:8%">From Email</th>	
+
+							<th style="width:8%">Time</th>
 							<th style="width:30%">Note</th>
 						</tr>
 					</thead>
@@ -196,7 +203,7 @@ function openTestFunc(e) {
 	socket = new WebSocket('ws://localhost:1337');
     console.log("here1");
 	socket.onopen = function () {
-		creds={func:'signin', userName:document.getElementById("user-name").value,location:document.getElementById("location").value};
+		creds={func:'signin', userName:document.getElementById("user-name").value,userLocation:document.getElementById("location").value};
         socket.send(JSON.stringify(creds));
     };
 	  console.log("here2");
@@ -237,7 +244,7 @@ function sendTestFunc(e) {
 	var message=document.getElementById("message-text").value;
 	creds.func='sendMessage';
 	creds.message=message;
-	creds.toUser=document.getElementById("to-user").value;
+	creds.toUserName=document.getElementById("to-user").value;
 
 	socket.send(JSON.stringify(creds));
 }

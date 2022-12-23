@@ -6,15 +6,22 @@ const bodyparser = require("body-parser");
 
 const PassFactory = require("./core/pass_factory");
 const DataIntegrity = require("./core/data_integrity");
+const RTManager = require("./core/rt_manager");
+const BlockCalculator = require("./core/block_calculator");
 
+var theRTManager = new RTManager(1337);
+theRTManager.initialize();
 
-//WEBSOCKETS START
+/*
 var server = require('websocket').server, http = require('http');
 var userMap=new Map();
 var socket = new server({  
     httpServer: http.createServer().listen(1337)
 });
+
 var count=1;
+*/
+/*
 socket.on('request', function(request) {  
 
     var connection = request.accept(null, request.origin);
@@ -54,6 +61,7 @@ console.log("connection.connected->" + connection.connected);
         console.log('connection closed->' + JSON.stringify(connection));
     });
 });
+*/
 // END OF WEBSOCKETS CODE
 
 console.log("starting server...");
@@ -63,6 +71,7 @@ console.log("starting server...");
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({ extended: false }));
 var publicDir = require('path').join(__dirname,'/public');
+console.log("PUBLIC DIR->" + publicDir);
 app.use(express.static(publicDir));
 
 
@@ -90,9 +99,9 @@ app.get('/get_faculty_for', (req, res)=>{
 	var fem = req.query.facultyEmail;
 	var res;
 	if ( fid != null ) {
-		res = thePassFactory.theFacultyHandler.theFaculty.get(parseInt(fid));
+		res = thePassFactory.theSchoolFactory.theFacultyHandler.theFaculty.get(parseInt(fid));
 	} else {
-		res = thePassFactory.theFacultyHandler.theFacultyByEmail.get(fem);
+		res = thePassFactory.theSchoolFactory.theFacultyHandler.theFacultyByEmail.get(fem);
 	}
 	if ( res==null ) { res="not found"; }
 	res.status(200).send("Here->" + JSON.stringify(res)); 	
@@ -101,14 +110,14 @@ console.log("get_master_schedule_for");
 
 app.get('/get_master_schedule_for', (req, res)=>{   
 	var pd = req.query.courseView;
-	res.status(200).send("Here->" + JSON.stringify(thePassFactory.theMasterScheduleHandler.theMasterSchedule.get(pd))); 
+	res.status(200).send("Here->" + JSON.stringify(thePassFactory.theSchoolFactory.theMasterScheduleHandler.theMasterSchedule.get(pd))); 
 	
 });
 console.log("get_student_for");
 app.get('/get_student_for', (req, res)=>{   
 	var pd = req.query.studentId;
 	console.log("getting student for->"+ pd);
-	res.status(200).send("Here->" + JSON.stringify(thePassFactory.theStudentHandler.theStudents.get(parseInt(pd)))); 
+	res.status(200).send("Here->" + JSON.stringify(thePassFactory.theSchoolFactory.theStudentHandler.theStudents.get(parseInt(pd)))); 
 }); 
 /*
  * This provides a direct link to user dev card.
@@ -137,8 +146,39 @@ app.post("/initialize_data", (req, res)=>{
 		var j = JSON.stringify(req.body);
 		var data = JSON.parse(j);
 		console.log("in initialize_data call->" + JSON.stringify(data));
-		await thePassFactory.initialize( data.forDate);
+		try {
+			await thePassFactory.initialize( data.forDate);
+			console.log("DONE INITIALIZING PASSFACTORY");
+		} catch(e) {
+			console.log("ERRORx->" + e.stack);
+		}
 		res.status(200).send(JSON.stringify(DataIntegrity.issues)); 	
+	} )();
+});
+app.post("/email_passes", (req, res)=>{   
+	(async() =>  { 
+	
+		console.log("in email_passes");
+		try {
+			await thePassFactory.emailPasses();
+			console.log("EMAIL PASSES");
+		} catch(e) {
+			console.log("ERRORx->" + e.stack);
+		}
+		res.status(200).send({"message" : "success"}); 	
+	} )();
+});
+app.post("/email_test_passes", (req, res)=>{   
+	(async() =>  { 
+	
+		console.log("in email_test_passes");
+		try {
+			await thePassFactory.emailTestStudentPass();
+			console.log("EMAIL TEST PASSES");
+		} catch(e) {
+			console.log("ERRORx->" + e.stack);
+		}
+		res.status(200).send({"message" : "success"}); 	
 	} )();
 });
 console.log("get_student_data");
@@ -147,7 +187,7 @@ app.post("/get_student_data", (req, res)=>{
 	(async() =>  { 
 		var j = JSON.stringify(req.body);
 		var data = JSON.parse(j);
-		res.status(200).send(JSON.stringify(Array.from(thePassFactory.theStudentHandler.theStudents.values()))); 	
+		res.status(200).send(JSON.stringify(Array.from(thePassFactory.theSchoolFactory.theStudentHandler.theStudents.values()))); 	
 	} )();
 });
 console.log("get_student_block_names");
@@ -157,7 +197,7 @@ app.post("/get_student_block_names", (req, res)=>{
 	(async() =>  { 
 		var j = JSON.stringify(req.body);
 		var data = JSON.parse(j);
-		var rr= Array.from(thePassFactory.theMasterScheduleHandler.allStudentBlockNames.entries()); 	
+		var rr= Array.from(thePassFactory.theSchoolFactory.theMasterScheduleHandler.allStudentBlockNames.entries()); 	
 		res.status(200).send(JSON.stringify(rr)); 	
 	} )();
 });
@@ -188,6 +228,49 @@ app.get("/send_test_email", (req, res)=>{
 		var data = JSON.parse(j);
 		var rr=await thePassFactory.theEmailHandler.sendTestEmail(); 	
 		res.status(200).send("Sent test email"); 	
+	} )();
+});
+app.post("/run_prod_batch", (req, res)=>{   
+	console.log("in run_prod_batch");
+	(async() =>  { 
+		try {
+			
+			var x = new Date();
+			/* if after 3pm then add a day. */
+			console.log("hours->" + x.getHours());
+			if ( x.getHours() >= 14 ) {
+				x.setDate(x.getDate()+1);
+			}
+			console.log("x->" + x);
+			var y = x.getFullYear();
+			var m = x.getMonth(); m++; if ( x.toString().length == 1) { m="0" + m.toString();} 
+			var d = x.getDate(); if ( d.toString().length == 1 ) { d = "0" + d.toString();}
+			var dtStr = y + "-" + m + "-" + d ;
+			console.log("Running Prod with ->"  + dtStr);
+			thePassFactory = new PassFactory();
+			await thePassFactory.initialize( dtStr );
+			console.log("DONE INITIALIZING PASSFACTORY");			
+			if ( ! BlockCalculator.isADay() && !BlockCalculator.isBDay() ) {
+				console.log("not a school day");
+				var rr=await thePassFactory.theEmailHandler.sendProdStatusEmail("Non School Day","Production ran but it is not a school day (" + dtStr + ")  so no mailings."); 	
+			} else {
+				var j = JSON.stringify(req.body);
+				var data = JSON.parse(j);
+				if ( data.flag == "ERROR") {
+					var e = new Error("test");
+					throw e;
+				}
+				console.log("EMAILING PASSES");
+				await thePassFactory.emailPasses();
+				console.log("DONE EMAILING PASSES");
+				var rr=await thePassFactory.theEmailHandler.sendProdStatusEmail("PassFactory: Success" ,"Emails successful."); 	
+			}
+			res.status(200).send(JSON.stringify({"message":"Sent prod status email"})); 
+		} catch ( e ) {
+			console.log(e.stack);
+			var rr=await thePassFactory.theEmailHandler.sendProdStatusEmail("Error",e.stack); 	
+			res.status(400).send(JSON.stringify({"message": e.toString() }));			
+		}
 	} )();
 });
 /*
