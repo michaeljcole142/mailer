@@ -243,7 +243,7 @@ app.post("/run_prod_batch", (req, res)=>{
 			}
 			console.log("x->" + x);
 			var y = x.getFullYear();
-			var m = x.getMonth(); m++; if ( x.toString().length == 1) { m="0" + m.toString();} 
+			var m = x.getMonth(); m++; if ( m.toString().length == 1) { m="0" + m.toString();} 
 			var d = x.getDate(); if ( d.toString().length == 1 ) { d = "0" + d.toString();}
 			var dtStr = y + "-" + m + "-" + d ;
 			console.log("Running Prod with ->"  + dtStr);

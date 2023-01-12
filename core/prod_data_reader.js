@@ -17,8 +17,10 @@ class ProdDataReader
 	static tempFacultyId = 9000000;
 	static getKey = async () => 
 	{
+		/* commenting out because running multiple days problem.
 		if (this.key != null)
 			return this.key;
+		*/
 		const url = 'https://nj-hcrhs.myfollett.com/oauth/rest/v2.0/auth'
 		const data = {
 			client_id: 'dailyAbsences',
