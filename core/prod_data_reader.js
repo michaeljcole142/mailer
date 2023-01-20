@@ -34,15 +34,11 @@ class ProdDataReader
 
   
 	static async getData(url){
-		console.log("url->" + url);
 		var secretKey = await ProdDataReader.getKey();
 		var options = { headers:{ Authorization: ' Bearer ' + secretKey }};
 		try {
-console.log("here1");			
 			const res = await axios.get(url, options);
-console.log("here2");
 			const d = await res.data;
-console.log("here3");
 			return d;
 		} catch (e) {
 			console.log("e.message->" + e.message);
@@ -71,10 +67,8 @@ console.log("here3");
 
 	static async getStudentData() 
 	{
-		console.log("GETSTUDENTDATA");
 		var theStudents = new Map();
 		var std =  await ProdDataReader.getData(url + "students2?status=Active");
-console.log("std.length->" + std.length);
 
 		for (var i=0; i < std.length; i++ ) 
 		{
@@ -127,7 +121,6 @@ console.log("std.length->" + std.length);
 		for (var i=0; i < f.length; i++ )
 		{  
 			var fac = new Faculty(parseInt(f[i].stateId), f[i].nameView, f[i].person.firstName, f[i].person.lastName, f[i].person.email01, f[i].departmentCode);
-			console.log("facccc->" + JSON.stringify(fac));
 			theFaculty.set(fac.id,fac);
 		} 
 		return theFaculty;
@@ -166,7 +159,7 @@ console.log("std.length->" + std.length);
 		for (var i=0; i < s.length; i++ ) {
 			var b=new MasterSchedule(s[i].courseView,s[i].primaryRoom.roomNumber, s[i].description, s[i].scheduleDisplay, s[i].termView, s[i].primaryStaff.person.email01,s[i]);
 			if ( theSched.has(s[i].courseView) ) {
-			console.log("DUPLICATE COURSE->" + JSON.stringify(s[i]) + "<- and ->" + JSON.stringify(theSched.get(s[i].courseView)));
+				//console.log("DUPLICATE COURSE->" + JSON.stringify(s[i]) + "<- and ->" + JSON.stringify(theSched.get(s[i].courseView)));
 			} else {
 				theSched.set(s[i].courseView, b);
 			}

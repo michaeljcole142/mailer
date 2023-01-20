@@ -10,7 +10,6 @@ class Room {
 		this.comment = aComment;
 		this.loc = aLoc;
 		this.cap = aCap;
-		console.log("Room Build->" + JSON.stringify(this));
 	}
 }
 module.exports = Room;

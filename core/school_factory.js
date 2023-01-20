@@ -86,7 +86,7 @@ class SchoolFactory {
 		console.log("Decorating the data objects....");
 		await this.decorateDataObjects();
 		console.log("Finished Decorating the data objects...");
-		DataIntegrity.print();
+		//DataIntegrity.print();
 	}
 	async decorateDataObjects() {
 		/* 

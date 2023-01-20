@@ -232,46 +232,65 @@ app.get("/send_test_email", (req, res)=>{
 });
 app.post("/run_prod_batch", (req, res)=>{   
 	console.log("in run_prod_batch");
+
 	(async() =>  { 
-		try {
+		// Try loading data maxTries times.
+		var maxTries=3;
+		var atTry=1;
+		var stillTrying = true;
+		res.status(200).send(JSON.stringify({"message":"Kicked Job Off"})); 
+		while ( stillTrying )  {
 			
-			var x = new Date();
-			/* if after 3pm then add a day. */
-			console.log("hours->" + x.getHours());
-			if ( x.getHours() >= 14 ) {
-				x.setDate(x.getDate()+1);
-			}
-			console.log("x->" + x);
-			var y = x.getFullYear();
-			var m = x.getMonth(); m++; if ( m.toString().length == 1) { m="0" + m.toString();} 
-			var d = x.getDate(); if ( d.toString().length == 1 ) { d = "0" + d.toString();}
-			var dtStr = y + "-" + m + "-" + d ;
-			console.log("Running Prod with ->"  + dtStr);
-			thePassFactory = new PassFactory();
-			await thePassFactory.initialize( dtStr );
-			console.log("DONE INITIALIZING PASSFACTORY");			
-			if ( ! BlockCalculator.isADay() && !BlockCalculator.isBDay() ) {
-				console.log("not a school day");
-				var rr=await thePassFactory.theEmailHandler.sendProdStatusEmail("Non School Day","Production ran but it is not a school day (" + dtStr + ")  so no mailings."); 	
-			} else {
-				var j = JSON.stringify(req.body);
-				var data = JSON.parse(j);
-				if ( data.flag == "ERROR") {
-					var e = new Error("test");
-					throw e;
+			try {
+				var x = new Date();
+				/* if after 3pm then add a day. */
+				console.log("hours->" + x.getHours());
+				if ( x.getHours() >= 14 ) {
+					x.setDate(x.getDate()+1);
 				}
-				console.log("EMAILING PASSES");
-				await thePassFactory.emailPasses();
-				console.log("DONE EMAILING PASSES");
-				var rr=await thePassFactory.theEmailHandler.sendProdStatusEmail("PassFactory: Success" ,"Emails successful."); 	
+				console.log("x->" + x);
+				var y = x.getFullYear();
+				var m = x.getMonth(); m++; if ( m.toString().length == 1) { m="0" + m.toString();} 
+				var d = x.getDate(); if ( d.toString().length == 1 ) { d = "0" + d.toString();}
+				var dtStr = y + "-" + m + "-" + d ;
+				console.log("Running Prod with ->"  + dtStr);
+				thePassFactory = new PassFactory();
+				await thePassFactory.initialize( dtStr );
+				console.log("DONE INITIALIZING PASSFACTORY At Try#->" + atTry);			
+				if ( ! BlockCalculator.isADay() && !BlockCalculator.isBDay() ) {
+					console.log("not a school day");
+					var rr=await thePassFactory.theEmailHandler.sendProdStatusEmail("Non School Day","Production ran but it is not a school day (" + dtStr + ")  so no mailings."); 	
+					stillTrying = false;
+				} else {
+					var j = JSON.stringify(req.body);
+					var data = JSON.parse(j);
+					if ( data.flag == "ERROR") {
+						var e = new Error("test");
+						throw e;
+					}
+					console.log("EMAILING PASSES");
+//Temp comment out.
+//					await thePassFactory.emailPasses();
+					console.log("DONE EMAILING PASSES");
+					var rr=await thePassFactory.theEmailHandler.sendProdStatusEmail("PassFactory: Success" ,"Emails successful on try#->" + atTry);
+					stillTrying=false;
+					if ( atTry < 2 ) {
+						throw new Error("TEST ERROR");
+					}
+				}
+			} catch ( e ) {
+				console.log(e.stack);
+				var rr=await thePassFactory.theEmailHandler.sendProdStatusEmail("Error",e.stack);
+				if ( atTry < maxTries ) {					
+					stillTrying=true;
+				} else {
+					stillTrying=false;
+				}
+				atTry++;
 			}
-			res.status(200).send(JSON.stringify({"message":"Sent prod status email"})); 
-		} catch ( e ) {
-			console.log(e.stack);
-			var rr=await thePassFactory.theEmailHandler.sendProdStatusEmail("Error",e.stack); 	
-			res.status(400).send(JSON.stringify({"message": e.toString() }));			
 		}
 	} )();
+	console.log("leaving prod run");
 });
 /*
  * Start the passFactory

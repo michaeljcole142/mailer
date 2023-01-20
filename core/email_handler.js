@@ -183,10 +183,7 @@ class EmailHandler {
 		.catch(console.error);		
 	}
 	async sendTeacherEmail(teacher, passList) {
-		console.log("Teacher->" + teacher.name + "  hr->" + passList.homeRoomList.length + " bl->" + passList.blockLeaveList.length);
-		for ( var i=0; i < passList.homeRoomList.length; i++ ) {
-			console.log("HR->" + passList.homeRoomList[i].student.name ) ;
-		}
+
 		var students=[];
 		for ( var i=0; i < passList.blockLeaveList.length; i++ ) {
 			var rec={};

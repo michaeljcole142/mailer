@@ -48,7 +48,7 @@ class PassFactory {
 		console.log("Decorating the data objects....");
 		await this.decorateDataObjects();
 		console.log("Finished Decorating the data objects...");
-		DataIntegrity.print();
+		//DataIntegrity.print();
 	}
 	async decorateDataObjects() {
 		/* 
@@ -150,11 +150,8 @@ console.log("emailTestStudentPass");
 		var testPass=passes[0];
 		var oe=testPass.student.email;
 		testPass.student.email="michael.cole@hcrhs.org";
-		console.log("oldemail->" + oe);
-		console.log("testPass->" + JSON.stringify(testPass));
 		await this.theEmailHandler.sendPassToStudent(testPass);
 		testPass.student.email=oe;
-		console.log("now email is->" + passes[0].student.email);
 	}	
 		
 	async getDecoratedPasses() {

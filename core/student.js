@@ -7,7 +7,6 @@ const DataIntegrity =  require('./data_integrity');
 class Student {
 	
 	constructor(aId,aFullName,aFirstName, aLastName,aEmail,theRawSource) {
-console.log("setting ->" + aFullName + " to->"  + aFirstName + " " + aLastName );		
 		this.id = aId;
 		this.name = aFullName;
 		this.fName = aFirstName;

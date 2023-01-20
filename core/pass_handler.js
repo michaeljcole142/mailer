@@ -38,7 +38,6 @@ class PassHandler {
 			} else {
 				passAt.student = student;
 				var from = BlockCalculator.getBlockInfo(passAt.dateTime);
-				console.log("got block->" + from);
 				passAt.fromBlock=student.getScheduleBlock(from);
 				passAt.homeRoomBlock=student.getHomeRoomBlock(BlockCalculator.ABDay);
 				this.thePasses.set(passAt.id,passAt);
