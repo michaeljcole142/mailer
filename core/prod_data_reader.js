@@ -34,11 +34,14 @@ class ProdDataReader
 
   
 	static async getData(url){
+console.log("urlll->" + url);
 		var secretKey = await ProdDataReader.getKey();
 		var options = { headers:{ Authorization: ' Bearer ' + secretKey }};
 		try {
 			const res = await axios.get(url, options);
+//console.log("res->" + JSON.stringify(res));
 			const d = await res.data;
+//console.log("d->" + JSON.stringify(d));
 			return d;
 		} catch (e) {
 			console.log("e.message->" + e.message);

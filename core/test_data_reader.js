@@ -27,7 +27,7 @@ class TestDataReader {
 			var s = new Student(parseInt(students[i].id), students[i].name, students[i].email);
 			theStudents.set(s.id,s);
 		}
-		console.log("loaded theStudents->" + JSON.stringify(Array.from(theStudents)));
+//		console.log("loaded theStudents->" + JSON.stringify(Array.from(theStudents)));
 		return theStudents;
 	}
 	static getFacultyData() {

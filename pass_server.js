@@ -269,14 +269,11 @@ app.post("/run_prod_batch", (req, res)=>{
 						throw e;
 					}
 					console.log("EMAILING PASSES");
-//Temp comment out.
-//					await thePassFactory.emailPasses();
+
+					var resStr=await thePassFactory.emailPassesWithRetry(3);
 					console.log("DONE EMAILING PASSES");
-					var rr=await thePassFactory.theEmailHandler.sendProdStatusEmail("PassFactory: Success" ,"Emails successful on try#->" + atTry);
+					var rr=await thePassFactory.theEmailHandler.sendProdStatusEmail("PassFactory: Success" ,"Emails successful on try#->" + atTry + "\n" + resStr);
 					stillTrying=false;
-					if ( atTry < 2 ) {
-						throw new Error("TEST ERROR");
-					}
 				}
 			} catch ( e ) {
 				console.log(e.stack);

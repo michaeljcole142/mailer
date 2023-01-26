@@ -195,7 +195,6 @@ class EmailHandler {
 			students.push(rec);
 		}
 		students.sort(function(a,b) { return a.dateTime - b.dateTime; });
-		console.log("students->" + JSON.stringify(students));
 
 		if ( this.transporter == null ) {
 			await this.initialize();

@@ -1,3 +1,4 @@
+var fetch = require('node-fetch');  
 
 function sendit() {	
 		const rr = async()=> { 
