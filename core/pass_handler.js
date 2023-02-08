@@ -37,6 +37,7 @@ class PassHandler {
 				DataIntegrity.addIssue("ERROR","PassHandler","decorate","Can't find student->" + passAt.studentId + " for pass->" + passAt.id);
 			} else {
 				passAt.student = student;
+
 				var from = BlockCalculator.getBlockInfo(passAt.dateTime);
 				passAt.fromBlock=student.getScheduleBlock(from);
 				passAt.homeRoomBlock=student.getHomeRoomBlock(BlockCalculator.ABDay);

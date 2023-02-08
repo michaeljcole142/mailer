@@ -163,11 +163,17 @@ console.log("emailTestStudentPass");
 			var here=false;	
 			var facultyAt=null;
 			if ( passes[i].student != null ) {
-				passes[i].homeRoomNumber = passes[i].homeRoomBlock.room;
-				passes[i].homeRoomTeacher = this.theSchoolFactory.theFacultyHandler.theFacultyByEmail.get(passes[i].homeRoomBlock.primaryEmail);
-				if ( passes[i].fromBlock != null ) {
-					passes[i].fromRoomNumber = passes[i].fromBlock.room;
-					passes[i].fromRoomTeacher = this.theSchoolFactory.theFacultyHandler.theFacultyByEmail.get(passes[i].fromBlock.primaryEmail);
+				if ( passes[i].homeRoomBlock == null ) {
+					console.log("ERROR:NO HOMEROOM BLOCK FOR PASS->" + JSON.stringify(passes[i].homeRoomBlock));
+					console.log("STUDENT IS->" + JSON.stringify(passes[i].student));
+				} else {
+				
+					passes[i].homeRoomNumber = passes[i].homeRoomBlock.room;
+					passes[i].homeRoomTeacher = this.theSchoolFactory.theFacultyHandler.theFacultyByEmail.get(passes[i].homeRoomBlock.primaryEmail);
+					if ( passes[i].fromBlock != null ) {
+						passes[i].fromRoomNumber = passes[i].fromBlock.room;
+						passes[i].fromRoomTeacher = this.theSchoolFactory.theFacultyHandler.theFacultyByEmail.get(passes[i].fromBlock.primaryEmail);
+					}
 				}
 	
 			} else {
@@ -198,9 +204,9 @@ console.log("emailingPassesWithRetry");
 				while ( keepTrying == true ) {
 					try {
 						console.log("send student email number->" + studentCt + " to->" + passAt.student.email);
-//						await this.theEmailHandler.sendPassToStudent(passAt);
+						await this.theEmailHandler.sendPassToStudent(passAt);
 						console.log("sleeping...");
-//						await sleep(3000);
+						await sleep(3000);
 						console.log("woke up...");
 						keepTrying = false;
 						studentCt++;
@@ -272,8 +278,8 @@ console.log("emailingPassesWithRetry");
 			while ( keepTrying == true ) {
 				try {
 					var teacherAt = this.theSchoolFactory.theFacultyHandler.theFaculty.get(parseInt(tt[i][0]));
-//					await this.theEmailHandler.sendTeacherEmail(teacherAt,tt[i][1]);
-//					await sleep(3000);
+					await this.theEmailHandler.sendTeacherEmail(teacherAt,tt[i][1]);
+					await sleep(3000);
 					keepTrying=false;
 					tCount++;
 				} catch (e) {

@@ -160,10 +160,18 @@ console.log("urlll->" + url);
 		var s =  await ProdDataReader.getData(url + "schedMaster?year=" + year);
 		var theSched = new Map();
 		for (var i=0; i < s.length; i++ ) {
+
+if ( s[i].courseView == "129-06" ){
+console.log("MS->" + JSON.stringify(s[i]));
+	console.log("QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ");
+}
 			var b=new MasterSchedule(s[i].courseView,s[i].primaryRoom.roomNumber, s[i].description, s[i].scheduleDisplay, s[i].termView, s[i].primaryStaff.person.email01,s[i]);
 			if ( theSched.has(s[i].courseView) ) {
 				//console.log("DUPLICATE COURSE->" + JSON.stringify(s[i]) + "<- and ->" + JSON.stringify(theSched.get(s[i].courseView)));
 			} else {
+if ( s[i].courseView == "554-11" ) {
+	console.log("setting theSched->" + JSON.stringify(b));
+}
 				theSched.set(s[i].courseView, b);
 			}
 		}

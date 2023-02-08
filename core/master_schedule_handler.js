@@ -50,6 +50,7 @@ class MasterScheduleHandler {
 		}
 		for (var i=0; i < this.theStudentBlocksSource.length; i++ ) {
 			var s = theStudents.get(parseInt(this.theStudentBlocksSource[i].student.localId));
+
 			if ( s == null ) {
 				DataIntegrity.addIssue("ERROR","MasterScheduleHandler","decorate","Can not find student in decorate of student schedule->" + this.theStudentBlocksSource[i].student.localId);
 			} else {
@@ -57,7 +58,7 @@ class MasterScheduleHandler {
 				if ( blk == null ) {
 					DataIntegrity.addIssue("ERROR","MasterScheduleHandler","decorate","Can not find courseview in decorate of student schedule->" + this.theStudentBlocksSource[i].section.courseView);
 				} else {
-					s.theSchedule.setBlocks(blk);
+					s.theSchedule.setBlocks(blk);				
 				}
 			}
 		}

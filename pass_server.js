@@ -88,7 +88,7 @@ app.get('/', (req, res)=>{
 	// page to be rendered as input 
 	// This page should be in the views folder 
 	// in the root directory. 
-	res.render('home'); 
+	res.render('home2'); 
 	
 });
 
@@ -243,16 +243,16 @@ app.post("/run_prod_batch", (req, res)=>{
 			
 			try {
 				var x = new Date();
-				/* if after 3pm then add a day. */
+				/* if after 2pm then add a day. */
 				console.log("hours->" + x.getHours());
-				if ( x.getHours() >= 14 ) {
+				if ( x.getHours() >= 13 ) {
 					x.setDate(x.getDate()+1);
 				}
 				console.log("x->" + x);
 				var y = x.getFullYear();
 				var m = x.getMonth(); m++; if ( m.toString().length == 1) { m="0" + m.toString();} 
 				var d = x.getDate(); if ( d.toString().length == 1 ) { d = "0" + d.toString();}
-				var dtStr = y + "-" + m + "-" + d ;
+				var dtStr = y + "-" + m + "-" + d ;				
 				console.log("Running Prod with ->"  + dtStr);
 				thePassFactory = new PassFactory();
 				await thePassFactory.initialize( dtStr );

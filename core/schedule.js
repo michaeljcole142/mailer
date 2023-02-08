@@ -20,6 +20,7 @@ class Schedule {
 	}	
 	
 	setBlocks(block) {
+
 		if ( block.term != "FY" && block.term != BlockCalculator.getCurrentTerm()) {
 			return;
 		}
@@ -27,7 +28,6 @@ class Schedule {
 			Schedule.initializeScheduleDisplayMap();
 		}
 		var blksA=Schedule.scheduleDisplayMap.get(block.scheduleDisplay);
-
 		if ( blksA == null ) {
 			DataIntegrity.addIssue("ERROR","Schedule","setBlock","Can not find schedule display for->" + block.displaySchedule + " with->" +  JSON.stringify(this));
 		} else {
