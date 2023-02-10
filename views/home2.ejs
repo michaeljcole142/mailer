@@ -25,7 +25,7 @@ var creds=null;
   
 function openTestFuncDemo(e) {
 	console.log("in open test func");
-	socket = new WebSocket('ws://localhost:1337');
+	socket = new WebSocket('ws://10.10.102.11:1337');
 	socket.onopen = function () {
 		creds={func:'signin', userName:document.getElementById("user-name-demo").value,userLocation:document.getElementById("location-demo").value};
         socket.send(JSON.stringify(creds));
