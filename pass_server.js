@@ -9,60 +9,13 @@ const DataIntegrity = require("./core/data_integrity");
 const RTManager = require("./core/rt_manager");
 const BlockCalculator = require("./core/block_calculator");
 
+/*
+ * These are the only 2 lines of code that are needed
+ * to start up the websocket server.
+ */
 var theRTManager = new RTManager(1337);
 theRTManager.initialize();
 
-/*
-var server = require('websocket').server, http = require('http');
-var userMap=new Map();
-var socket = new server({  
-    httpServer: http.createServer().listen(1337)
-});
-
-var count=1;
-*/
-/*
-socket.on('request', function(request) {  
-
-    var connection = request.accept(null, request.origin);
-console.log("made connection->" + connection.constructor.name);
-console.log("connection.closeDescription->" + connection.closeDescription);
-console.log("connection.closeReasonCode->" + connection.closeReasonCode);
-console.log("connection.protocol->" + connection.protocol);
-console.log("connection.extensions->" + connection.extensions);
-console.log("connection.remoteAddress->" + connection.remoteAddress);
-console.log("connection.webSocketVersion->" + connection.webSocketVersion);
-console.log("connection.connected->" + connection.connected);
-
-    connection.on('message',async  function(message) {
-		console.log("got message->" + message.utf8Data + " from->" + connection.myuser);
-		var userData=JSON.parse(message.utf8Data);
-		if ( userData.func == "signin") {
-			connection.myuser=userData.userName;
-			userMap.set(userData.userName,connection);
-			console.log("siginging in->" + userData.userName);
-			connection.send(JSON.stringify( { func: 'signinsuccess' , message: 'hello ' + userData.userName + ", we will set you up for location " + userData.location }));
-
-			console.log("sent");
-		} else if ( userData.func == "sendMessage" ) {
-			var toUser = userMap.get(userData.toUser);
-			if ( toUser == null ) {
-				connection.send("can't find->" + userData.toUser ) ;
-			} else {
-				toUser.send(JSON.stringify(userData));
-				connection.send( JSON.stringify({func:"successSendMessage", message: "message was sent to->" + userData.toUser}));
-			}
-		} else { 
-			connection.send("Sorry, I don't understand what you are asking for.");
-		}	
-    });
-
-    connection.on('close', function(connection) {
-        console.log('connection closed->' + JSON.stringify(connection));
-    });
-});
-*/
-// END OF WEBSOCKETS CODE
 
 console.log("starting server...");
 
@@ -84,6 +37,14 @@ app.get("/hello_world", (req, res) => {
 });
 
 app.get('/', (req, res)=>{   
+	// The render method takes the name of the HTML 
+	// page to be rendered as input 
+	// This page should be in the views folder 
+	// in the root directory. 
+	res.render('home'); 
+	
+});
+app.get('/home2', (req, res)=>{   
 	// The render method takes the name of the HTML 
 	// page to be rendered as input 
 	// This page should be in the views folder 

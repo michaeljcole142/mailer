@@ -272,12 +272,13 @@ console.log("emailingPassesWithRetry");
 		var tCount=0;
 		console.log("#######################");
 		for (var i=0; i < tt.length; i++ ) {
-		//	console.log("##->" + JSON.stringify(tt[i]));
+			console.log("##->" + JSON.stringify(tt[i]));
 			var tryAt=1;
 			var keepTrying=true;
 			while ( keepTrying == true ) {
 				try {
 					var teacherAt = this.theSchoolFactory.theFacultyHandler.theFaculty.get(parseInt(tt[i][0]));
+
 					await this.theEmailHandler.sendTeacherEmail(teacherAt,tt[i][1]);
 					await sleep(3000);
 					keepTrying=false;

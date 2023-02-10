@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+	<body>				
+		<label>UserName:</label>
+		<input type="text" id="user-name-demo"></input>
+		<br>
+		<label>Location:</label>
+		<input type="text" id="location-demo"></input>
+		<br>
+		<label>To User:</label>
+		<input type="text" id="to-user-demo"></input>
+		<br>
+		<button id="close-test-demo" onclick="closeTestFuncDemo(event)">close</button>
+		<button id="open-test-demo" onclick="openTestFuncDemo(event)">open</button>
+		<input id="message-text-demo" type="text" oninput="messageInputFuncDemo(event)"></input>
+		<button id="open-send-demo" onclick="sendTestFuncDemo(event)">send</button>
+
+		<label>WebSocket here</label>
+		<div id="content-demo"></div>
+	</body>
+<script>
+var socket=null;
+var creds=null;
+
+  
+function openTestFuncDemo(e) {
+	console.log("in open test func");
+	socket = new WebSocket('ws://localhost:1337');
+	socket.onopen = function () {
+		creds={func:'signin', userName:document.getElementById("user-name-demo").value,userLocation:document.getElementById("location-demo").value};
+        socket.send(JSON.stringify(creds));
+    };
+	socket.onmessage = receiveMessageDemo;
+    socket.onerror = function (error) {
+        console.log('WebSocket error: ' + error);
+    };
+}
+function receiveMessageDemo(message) {
+	console.log("receving->" + message.data);
+	var content = document.getElementById('content-demo');
+	var msg=JSON.parse(message.data);
+	if ( msg.func =="signinsuccess" ) {
+		content.innerHTML += "SUCCESS SIGNIN: " + msg.message  + '<br />';
+	} else if ( msg.func == "successSendMessage" ) {
+		content.innerHTML += "SUCCESS SEND: " + msg.message  + '<br />';
+	} else if ( msg.func == "sendMessage" ) {
+		content.innerHTML += "From: " + msg.userName + " ->" + msg.message  + '<br />';
+	} else {
+		content.innerHTML += "Unknown message->"  + JSON.stringify(msg) + '<br>';
+	}
+}
+function closeTestFuncDemo(e) {
+	console.log("in close test func");
+	socket.send (JSON.stringify({ func: 'close'} )) ;
+	socket.close(3021);
+}
+function messageInputFuncDemo(e) {
+	console.log("messageInputFunc" + document.getElementById(e.srcElement.id).value);
+}
+function sendTestFuncDemo(e) {
+	console.log("sendTestFunc->" + document.getElementById(e.srcElement.id).value);
+	var message=document.getElementById("message-text-demo").value;
+	creds.func='sendMessage';
+	creds.message=message;
+	creds.toUserName=document.getElementById("to-user-demo").value;
+	socket.send(JSON.stringify(creds));
+}
+</script>
+</html>
+
+
+
+			
+			
