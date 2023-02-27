@@ -8,7 +8,7 @@
 
 class RTMessage {
 	
-	static messageFuncs=["signin", "sendMessage"];
+	static messageFuncs=["signin", "sendMessage", "close"];
 	
 	constructor() {
 		this.func=null;
@@ -35,7 +35,7 @@ class RTMessage {
 		if ( ! RTMessage.messageFuncs.includes(this.func)) {
 			throw new Error("unknown func->" + this.func);
 		}
-		if ( this.userName == null ) {
+		if ( this.userName == null && this.func != "close" ) {
 			throw new Error("userName is null");
 		}
 		return true;
