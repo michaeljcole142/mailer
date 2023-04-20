@@ -7,7 +7,7 @@ const RTMessage = require('./rt_message');
 
 class RTManager {
 	
-	static userCounter=1;
+	static userCounter=0;
 	static userMap=new Map();
 	
 	constructor(port) {
@@ -29,8 +29,10 @@ class RTManager {
 			console.log("connection.remoteAddress->" + connection.remoteAddress);
 			console.log("connection.webSocketVersion->" + connection.webSocketVersion);
 			console.log("connection.connected->" + connection.connected);
-			connection.userCounter=RTManager.userCounter;
+
 			RTManager.userCounter++;
+			connection.userCounter=RTManager.userCounter;
+			console.log("connection.userCounter -> " + connection.userCounter);
 			
 			/*
 			* On Message Event Handler.
@@ -47,7 +49,7 @@ class RTManager {
 				if ( msg.func == "signin") {
 					connection.myuser=msg.userName;
 					RTManager.userMap.set(msg.userName,connection);
-					console.log("siginging in->" + msg.userName);
+					console.log("signing in->" + msg.userName);
 					connection.send(JSON.stringify( { func: 'signinsuccess' , message: 'hello ' + msg.userName + ", we will set you up for location " + msg.userLocation }));
 
 					console.log("sent");
@@ -73,6 +75,8 @@ class RTManager {
 			* On Close Event Handler
 			*/
 			connection.on('close', async function(connection) {
+
+				RTManager.userCounter--;
 				console.log('connection closed->' + JSON.stringify(connection));
 			});
 		});	
